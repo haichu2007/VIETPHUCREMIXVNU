@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { OutfitSelection } from '../types';
+import { OutfitSelection, FabricTextureType, TextureIntensityType } from '../types';
 import {
   GARMENTS,
   BOTTOM_PIECES,
@@ -9,21 +9,114 @@ import {
   ACCESSORY_PIECES,
   COLORS
 } from '../data/mockData';
-import { ZoomIn, ZoomOut, Sparkles, Layers } from 'lucide-react';
+import { ZoomIn, ZoomOut, Sparkles, Info } from 'lucide-react';
+
+export interface FabricTextureMeta {
+  id: FabricTextureType;
+  label: string;
+  sublabel: string;
+  origin: string;
+  icon: string;
+  description: string;
+}
+
+export const FABRIC_TEXTURE_OPTIONS: FabricTextureMeta[] = [
+  {
+    id: 'silk',
+    label: 'Lụa (Silk)',
+    sublabel: 'Mulberry Silk',
+    origin: 'Lụa Tơ Tằm Hà Đông',
+    icon: '✦',
+    description: 'Bề mặt phủ ánh lụa tơ tằm óng ả với vệt phản quang mềm mại và vi sợi dệt chéo tạo xúc giác mượt mà.'
+  },
+  {
+    id: 'linen',
+    label: 'Đũi (Linen)',
+    sublabel: 'Raw Linen',
+    origin: 'Đũi Tự Nhiên Nam Cao',
+    icon: '▦',
+    description: 'Vân sợi gai đan chéo thô mộc, tạo độ nhám sần xúc giác tự nhiên và thoáng mát đặc trưng xứ nhiệt đới.'
+  },
+  {
+    id: 'brocade',
+    label: 'Gấm (Brocade)',
+    sublabel: 'Damask Jacquard',
+    origin: 'Gấm Hoa Vạn Phúc',
+    icon: '✤',
+    description: 'Họa tiết mây sen chìm hoàng cung với ánh kim sa vương giả, tôn vinh nét quý phái triều đình.'
+  },
+  {
+    id: 'grain',
+    label: 'Hạt Phim',
+    sublabel: 'Editorial Film',
+    origin: 'Editorial Magazine Grain',
+    icon: '❖',
+    description: 'Hạt nhiễu analog tinh tế giúp xóa bỏ cảm giác vector số phẳng, mang chuẩn mực lookbook thời trang.'
+  },
+  {
+    id: 'none',
+    label: 'Vector Thuần',
+    sublabel: 'Clean Vector',
+    origin: 'Flat Vector Minimal',
+    icon: '○',
+    description: 'Đường nét đồ họa vector phẳng nguyên bản không kèm lớp phủ sợi vải xúc giác.'
+  }
+];
 
 interface MannequinPreviewProps {
   selection: OutfitSelection;
   interactive?: boolean;
   compact?: boolean;
+  fabricTexture?: FabricTextureType;
+  onFabricTextureChange?: (tex: FabricTextureType) => void;
+  textureIntensity?: TextureIntensityType;
+  onTextureIntensityChange?: (intensity: TextureIntensityType) => void;
 }
 
 export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
   selection,
   interactive = true,
-  compact = false
+  compact = false,
+  fabricTexture: controlledTexture,
+  onFabricTextureChange,
+  textureIntensity: controlledIntensity,
+  onTextureIntensityChange
 }) => {
   const [zoomLevel, setZoomLevel] = useState<'full' | 'torso'>('full');
-  const [showTexture, setShowTexture] = useState(true);
+  const [localTexture, setLocalTexture] = useState<FabricTextureType>(
+    selection.fabricTexture || 'silk'
+  );
+  const [localIntensity, setLocalIntensity] = useState<TextureIntensityType>(
+    selection.textureIntensity || 'medium'
+  );
+  const [showTextureInspector, setShowTextureInspector] = useState(false);
+
+  const activeTexture = controlledTexture ?? selection.fabricTexture ?? localTexture;
+  const activeIntensity = controlledIntensity ?? selection.textureIntensity ?? localIntensity;
+  const showTexture = activeTexture !== 'none';
+
+  const handleTextureSelect = (tex: FabricTextureType) => {
+    setLocalTexture(tex);
+    if (onFabricTextureChange) {
+      onFabricTextureChange(tex);
+    }
+  };
+
+  const handleIntensityCycle = () => {
+    const nextIntensity: Record<TextureIntensityType, TextureIntensityType> = {
+      subtle: 'medium',
+      medium: 'rich',
+      rich: 'subtle'
+    };
+    const next = nextIntensity[activeIntensity];
+    setLocalIntensity(next);
+    if (onTextureIntensityChange) {
+      onTextureIntensityChange(next);
+    }
+  };
+
+  const activeTextureMeta =
+    FABRIC_TEXTURE_OPTIONS.find((t) => t.id === activeTexture) || FABRIC_TEXTURE_OPTIONS[0];
 
   const garment = GARMENTS.find((g) => g.id === selection.garmentId) || GARMENTS[0];
   const bottom = BOTTOM_PIECES.find((b) => b.id === selection.bottomId) || BOTTOM_PIECES[0];
@@ -38,9 +131,11 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-between w-full h-full rounded-2xl overflow-hidden border border-[#E5DDD0] shadow-sm select-none ${
-        compact ? 'p-3.5' : 'p-6'
-      } bg-[radial-gradient(ellipse_at_50%_35%,_#FFFFFF_0%,_#F7F3EC_55%,_#ECE3D4_100%)]`}
+      className={`garment-preview-tactile ${
+        activeTexture !== 'none' ? `texture-${activeTexture}` : ''
+      } intensity-${activeIntensity} relative flex flex-col items-center justify-between w-full h-full rounded-2xl overflow-hidden border border-[#E5DDD0] shadow-sm select-none ${
+        compact ? 'p-3.5' : 'p-5'
+      } bg-[radial-gradient(ellipse_at_50%_35%,_#FFFFFF_0%,_#F7F3EC_55%,_#ECE3D4_100%)] transition-all`}
     >
       {/* Studio Blueprint & Architectural Hairlines (Editorial Grid Marks) */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
@@ -59,42 +154,100 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
       </div>
 
       {/* Top Editorial Bar */}
-      <div className="w-full flex items-center justify-between z-10 text-xs tracking-wider">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between z-20 text-xs tracking-wider gap-2">
         <div className="flex items-center gap-2">
           <span className="font-editorial text-sm font-bold tracking-widest text-[#1E1D1B] uppercase">
             Việt Phục Remix
           </span>
           <span className="text-[#A39988]">/</span>
-          <span className="text-[#8B1E1E] font-semibold uppercase text-[11px] tracking-wider">
+          <span className="text-[#8B1E1E] font-semibold uppercase text-[11px] tracking-wider truncate max-w-[130px]">
             {garment.name}
           </span>
         </div>
 
         {interactive && (
-          <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#E5DDD0] text-[#554E43] shadow-xs">
+          <div className="flex flex-wrap items-center gap-1.5 bg-white/95 backdrop-blur-md px-2 py-1 rounded-xl border border-[#E5DDD0] text-[#554E43] shadow-xs">
+            {/* Tactile Fabric Texture Segmented Selector */}
+            <div className="flex items-center p-0.5 bg-[#F4EFEA] rounded-lg">
+              {FABRIC_TEXTURE_OPTIONS.map((tex) => {
+                const isSelected = activeTexture === tex.id;
+                return (
+                  <button
+                    key={tex.id}
+                    onClick={() => handleTextureSelect(tex.id)}
+                    className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                      isSelected
+                        ? 'bg-[#8B1E1E] text-white shadow-2xs'
+                        : 'text-[#695F50] hover:text-[#1E1D1B]'
+                    }`}
+                    title={`${tex.label} — ${tex.description}`}
+                  >
+                    <span>{tex.icon}</span>
+                    <span className="hidden md:inline">{tex.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Tactile Intensity Cycler */}
+            {activeTexture !== 'none' && (
+              <button
+                onClick={handleIntensityCycle}
+                className="px-2 py-1 text-[10px] font-semibold bg-[#F4EFEA] hover:bg-[#EAE2D5] text-[#554E43] rounded-md transition-colors cursor-pointer whitespace-nowrap"
+                title="Thay đổi độ phủ xúc giác: Nhẹ · Vừa · Rõ"
+              >
+                Độ phủ:{' '}
+                <span className="text-[#8B1E1E] font-bold uppercase">
+                  {activeIntensity === 'subtle' ? 'Nhẹ' : activeIntensity === 'medium' ? 'Vừa' : 'Rõ'}
+                </span>
+              </button>
+            )}
+
+            {/* Texture Inspector Info toggle */}
             <button
-              onClick={() => setShowTexture(!showTexture)}
-              className={`p-1 rounded-sm transition-colors cursor-pointer ${
-                showTexture ? 'text-[#8B1E1E]' : 'text-[#8C8375] hover:text-[#1E1D1B]'
+              onClick={() => setShowTextureInspector(!showTextureInspector)}
+              className={`p-1 rounded-md transition-colors cursor-pointer ${
+                showTextureInspector ? 'bg-[#8B1E1E]/10 text-[#8B1E1E]' : 'hover:text-[#1E1D1B]'
               }`}
-              title={showTexture ? 'Tắt vân gấm/lụa' : 'Bật vân gấm/lụa'}
+              title="Thông tin xúc giác chất liệu"
             >
-              <Layers size={13} />
+              <Info size={13} />
             </button>
+
             <span className="text-[#D3C7B5]">|</span>
+
+            {/* Zoom toggle */}
             <button
               onClick={() => setZoomLevel(zoomLevel === 'full' ? 'torso' : 'full')}
-              className="p-1 hover:text-[#1E1D1B] transition-colors cursor-pointer"
+              className="p-1 hover:text-[#1E1D1B] transition-colors cursor-pointer flex items-center gap-1"
               title={zoomLevel === 'full' ? 'Phóng to thân trên' : 'Xem toàn cảnh'}
             >
               {zoomLevel === 'full' ? <ZoomIn size={13} /> : <ZoomOut size={13} />}
+              <span className="text-[10px] uppercase font-semibold">
+                {zoomLevel === 'full' ? 'Toàn cảnh' : 'Cận cảnh'}
+              </span>
             </button>
-            <span className="text-[10px] uppercase font-semibold px-0.5">
-              {zoomLevel === 'full' ? 'Full' : 'Detail'}
-            </span>
           </div>
         )}
       </div>
+
+      {/* Tactile Texture Inspector Toast / Overlay info */}
+      {showTextureInspector && interactive && (
+        <div className="w-full z-20 mt-1.5 p-2.5 bg-white/95 backdrop-blur-md border border-[#E5DDD0] rounded-xl shadow-xs text-left">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#8B1E1E]">
+              <span>{activeTextureMeta.icon}</span>
+              <span className="font-editorial">{activeTextureMeta.origin}</span>
+            </div>
+            <span className="text-[10px] font-mono text-[#7A7061] uppercase tracking-wider">
+              Tactile Fabric Overlay
+            </span>
+          </div>
+          <p className="text-[11px] text-[#554E41] leading-relaxed">
+            {activeTextureMeta.description}
+          </p>
+        </div>
+      )}
 
       {/* Main Fashion Illustration & Cel-shaded Model */}
       <div
@@ -962,7 +1115,7 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
       </div>
 
       {/* Bottom Floating Piece Ticker */}
-      <div className="w-full flex items-center justify-between z-10 pt-2 border-t border-[#E5DDD0]/70 text-[11px] text-[#6E6659]">
+      <div className="w-full flex items-center justify-between z-20 pt-2 border-t border-[#E5DDD0]/70 text-[11px] text-[#6E6659]">
         <div className="flex items-center gap-1.5 truncate">
           <span
             className="inline-block w-2.5 h-2.5 rounded-full border border-black/10 shrink-0"
@@ -975,9 +1128,20 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
           <span className="truncate">{bottom.name}</span>
         </div>
 
-        <div className="flex items-center gap-1 text-[#8B1E1E] shrink-0 font-semibold ml-2">
-          <Sparkles size={12} />
-          <span>Haute Couture</span>
+        <div className="flex items-center gap-2 shrink-0 ml-2">
+          {/* Active Tactile Overlay Tag */}
+          <div
+            className="hidden sm:flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/85 border border-[#E5DDD0] text-[#7A6D5D] shadow-2xs"
+            title={`${activeTextureMeta.label}: ${activeTextureMeta.description}`}
+          >
+            <span className="text-[#8B1E1E]">{activeTextureMeta.icon}</span>
+            <span>{activeTextureMeta.origin}</span>
+          </div>
+
+          <div className="flex items-center gap-1 text-[#8B1E1E] font-semibold">
+            <Sparkles size={12} />
+            <span>Haute Couture</span>
+          </div>
         </div>
       </div>
     </div>

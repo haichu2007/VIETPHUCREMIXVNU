@@ -1,4 +1,6 @@
 export type GarmentCategory = 'garment' | 'bottom' | 'headwear' | 'footwear' | 'bag' | 'accessories';
+export type FabricTextureType = 'silk' | 'linen' | 'brocade' | 'grain' | 'none';
+export type TextureIntensityType = 'subtle' | 'medium' | 'rich';
 
 export interface Garment {
   id: string;
@@ -99,6 +101,8 @@ export interface OutfitSelection {
   colorId: string;
   avatarId?: string;
   customPhotoUrl?: string;
+  fabricTexture?: FabricTextureType;
+  textureIntensity?: TextureIntensityType;
 }
 
 export interface AvatarModel {
@@ -189,25 +193,3 @@ export interface Lookbook {
   createdAt: string;
   theme: string;
 }
-
-export interface MasterPromptFormula {
-  id: string;
-  garmentName: string;
-  vietnameseTitle: string;
-  styleVibe: string;
-  englishPrompt: string;
-  anatomicalBreakdown: {
-    subjectIdentity: string;
-    traditionalGarment: string;
-    genZModernLayer: string;
-    studioLighting: string;
-    cameraGear: string;
-  };
-  editorialBackdrop: string;
-  accentColor: string;
-  garmentId: string;
-  suggestedSelection: OutfitSelection;
-}
-
-export type FaceTryOnStep = 'cta' | 'guideline' | 'crop' | 'generating' | 'result';
-

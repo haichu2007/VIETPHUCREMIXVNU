@@ -13,8 +13,6 @@ import { OutfitResultModal } from './components/OutfitResultModal';
 import { SocialShareModal } from './components/SocialShareModal';
 import { DemoTourModal } from './components/DemoTourModal';
 import { LookbookModal } from './components/LookbookModal';
-import { AIFaceTryOnModal } from './components/AIFaceTryOnModal';
-import { AIDirectImageStudioModal } from './components/AIDirectImageStudioModal';
 
 const DEFAULT_SELECTION: OutfitSelection = {
   garmentId: 'ao-ngu-than',
@@ -24,7 +22,9 @@ const DEFAULT_SELECTION: OutfitSelection = {
   bagId: 'bag-crossbody-nylon',
   accessoryId: 'acc-headphones',
   styleId: 'style-street',
-  colorId: 'lacquer-red'
+  colorId: 'lacquer-red',
+  fabricTexture: 'silk',
+  textureIntensity: 'medium'
 };
 
 export const App: React.FC = () => {
@@ -57,8 +57,6 @@ export const App: React.FC = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [isGlobalLookbookOpen, setIsGlobalLookbookOpen] = useState(false);
-  const [isFaceTryOnModalOpen, setIsFaceTryOnModalOpen] = useState(false);
-  const [isDirectImageModalOpen, setIsDirectImageModalOpen] = useState(false);
 
   // Dynamic code for current configuration
   const currentCode = 'VIỆT PHỤC REMIX #027';
@@ -142,8 +140,6 @@ export const App: React.FC = () => {
         onStartDemo={() => setIsDemoModalOpen(true)}
         savedCount={savedOutfits.length}
         onOpenLookbook={() => setIsGlobalLookbookOpen(true)}
-        onOpenAIFaceModal={() => setIsFaceTryOnModalOpen(true)}
-        onOpenDirectImageStudio={() => setIsDirectImageModalOpen(true)}
       />
 
       {/* Main View Router */}
@@ -160,7 +156,6 @@ export const App: React.FC = () => {
                 setActiveTab('ai');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              onOpenAIFaceModal={() => setIsFaceTryOnModalOpen(true)}
               heroSelection={selection}
             />
 
@@ -206,8 +201,6 @@ export const App: React.FC = () => {
             onOpenResult={() => setIsResultModalOpen(true)}
             outfitCode={currentCode}
             savedOutfits={savedOutfits}
-            onOpenAIFaceModal={() => setIsFaceTryOnModalOpen(true)}
-            onOpenDirectImageStudio={() => setIsDirectImageModalOpen(true)}
           />
         )}
 
@@ -219,10 +212,7 @@ export const App: React.FC = () => {
         )}
 
         {activeTab === 'ai' && (
-          <AIStylistSection
-            onApplyOutfit={handleLoadLookToRemix}
-            onOpenAIFaceModal={() => setIsFaceTryOnModalOpen(true)}
-          />
+          <AIStylistSection onApplyOutfit={handleLoadLookToRemix} />
         )}
 
         {activeTab === 'about' && (
@@ -249,10 +239,6 @@ export const App: React.FC = () => {
           setIsShareModalOpen(true);
         }}
         onContinueRemix={() => setIsResultModalOpen(false)}
-        onGenerateDirectImage={() => {
-          setIsResultModalOpen(false);
-          setIsDirectImageModalOpen(true);
-        }}
       />
 
       {/* Social Share Modal (4:5 or 1:1) */}
@@ -275,28 +261,6 @@ export const App: React.FC = () => {
         isOpen={isGlobalLookbookOpen}
         onClose={() => setIsGlobalLookbookOpen(false)}
         savedOutfits={savedOutfits}
-      />
-
-      {/* AI Face Try-On & Lookbook Modal */}
-      <AIFaceTryOnModal
-        isOpen={isFaceTryOnModalOpen}
-        onClose={() => setIsFaceTryOnModalOpen(false)}
-        currentSelection={selection}
-        onApplySelection={(newSel) => {
-          setSelection(newSel);
-          setActiveTab('remix');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
-
-      {/* Direct AI Image Studio Modal (gemini-3.1-flash-image-preview) */}
-      <AIDirectImageStudioModal
-        isOpen={isDirectImageModalOpen}
-        onClose={() => setIsDirectImageModalOpen(false)}
-        selection={selection}
-        onSaveToLookbook={(imgUrl, prompt) => {
-          handleSaveCurrentOutfit();
-        }}
       />
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { OutfitSelection, SavedOutfit } from '../types';
+import { OutfitSelection, SavedOutfit, FabricTextureType } from '../types';
 import {
   GARMENTS,
   BOTTOM_PIECES,
@@ -13,13 +13,12 @@ import {
   checkCulturalIntegrity
 } from '../data/mockData';
 import { calculateStyleScore } from '../utils/styleScore';
-import { MannequinPreview } from './MannequinPreview';
+import { MannequinPreview, FABRIC_TEXTURE_OPTIONS } from './MannequinPreview';
 import { CulturalWarningAlert } from './CulturalWarningAlert';
 import { ColorHarmonyChecker } from './ColorHarmonyChecker';
 import { WeatherEventRecommender } from './WeatherEventRecommender';
 import { OutfitComparisonModal } from './OutfitComparisonModal';
 import { LookbookModal } from './LookbookModal';
-import { AIFaceTryOnModal } from './AIFaceTryOnModal';
 import {
   Sparkles,
   Shuffle,
@@ -34,9 +33,7 @@ import {
   CloudSun,
   ArrowLeftRight,
   BookOpen,
-  Trash2,
-  Camera,
-  User
+  Trash2
 } from 'lucide-react';
 
 interface RemixEditorProps {
@@ -45,8 +42,6 @@ interface RemixEditorProps {
   onOpenResult: () => void;
   outfitCode: string;
   savedOutfits: SavedOutfit[];
-  onOpenAIFaceModal?: () => void;
-  onOpenDirectImageStudio?: () => void;
 }
 
 export const RemixEditor: React.FC<RemixEditorProps> = ({
@@ -54,9 +49,7 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
   setSelection,
   onOpenResult,
   outfitCode,
-  savedOutfits,
-  onOpenAIFaceModal,
-  onOpenDirectImageStudio
+  savedOutfits
 }) => {
   const [activeCategoryTab, setActiveCategoryTab] = useState<
     'garment' | 'bottom' | 'footwear' | 'headwear' | 'bag' | 'accessories' | 'avatar'
@@ -68,7 +61,6 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
   const [isWeatherModalOpen, setIsWeatherModalOpen] = useState(false);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [isLookbookModalOpen, setIsLookbookModalOpen] = useState(false);
-  const [isInternalAIFaceModalOpen, setIsInternalAIFaceModalOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -86,6 +78,8 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
     const randomAccessory = ACCESSORY_PIECES[Math.floor(Math.random() * ACCESSORY_PIECES.length)];
     const randomStyle = STYLES[Math.floor(Math.random() * STYLES.length)];
     const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+    const randomTextures: FabricTextureType[] = ['silk', 'linen', 'brocade', 'grain'];
+    const randomTexture = randomTextures[Math.floor(Math.random() * randomTextures.length)];
 
     setSelection((prev) => ({
       ...prev,
@@ -96,7 +90,8 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
       bagId: randomBag.id,
       accessoryId: randomAccessory.id,
       styleId: randomStyle.id,
-      colorId: randomColor.id
+      colorId: randomColor.id,
+      fabricTexture: randomTexture
     }));
   };
 
@@ -141,36 +136,6 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
 
         {/* Feature Triggers Action Pills */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* CTA: Tạo Ảnh AI Trực Tiếp từ Look Này (gemini-3.1-flash-image-preview) */}
-          <button
-            onClick={() => {
-              if (onOpenDirectImageStudio) onOpenDirectImageStudio();
-              else if (onOpenAIFaceModal) onOpenAIFaceModal();
-            }}
-            className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-linear-to-r from-[#8B1E1E] via-[#A02424] to-[#8B1E1E] hover:from-[#721717] hover:to-[#721717] text-white rounded-lg transition-all shadow-xs cursor-pointer active:scale-98"
-            title="Tạo ảnh trực tiếp bằng mô hình sinh ảnh AI gemini-3.1-flash-image-preview từ look này"
-          >
-            <Sparkles size={14} className="text-[#FFDF78] animate-pulse" />
-            <span>Tạo Ảnh AI Trực Tiếp</span>
-            <span className="text-[9px] font-mono px-1.5 py-0.2 bg-black/25 text-[#FFDF78] rounded">
-              Direct AI
-            </span>
-          </button>
-
-          {/* CTA: Tạo AI Lookbook với khuôn mặt của bạn */}
-          <button
-            onClick={() => {
-              if (onOpenAIFaceModal) onOpenAIFaceModal();
-              else setIsInternalAIFaceModalOpen(true);
-            }}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-linear-to-r from-[#1C1816] via-[#332A24] to-[#1C1816] hover:from-[#2B231D] hover:to-[#2B231D] text-[#FFDF78] border border-[#C89B3C]/70 rounded-lg transition-all shadow-xs cursor-pointer active:scale-98"
-            title="Tạo AI Lookbook với khuôn mặt của bạn (5 bước kiểm soát tỷ lệ)"
-          >
-            <User size={13} className="text-[#C89B3C]" />
-            <span className="hidden sm:inline">Thử Chân Dung</span>
-            <span className="sm:hidden">Chân Dung</span>
-          </button>
-
           {/* Weather & Event Button */}
           <button
             onClick={() => setIsWeatherModalOpen(true)}
@@ -508,39 +473,6 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
             {/* 7. Avatar Model & User Photo Upload Tab */}
             {activeCategoryTab === 'avatar' && (
               <div className="space-y-4">
-                {/* PROMINENT AI FACE LOOKBOOK HERO CARD */}
-                <div className="p-4 bg-linear-to-br from-[#1C1816] via-[#2A231E] to-[#1C1816] text-[#FAF8F5] rounded-xl border border-[#C89B3C]/70 shadow-md text-left space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#FFDF78] font-bold flex items-center gap-1.5">
-                      <Sparkles size={12} className="text-[#C89B3C] animate-pulse" />
-                      Quy trình kiểm soát 5 bước
-                    </span>
-                    <span className="px-1.5 py-0.5 bg-[#8B1E1E] text-white text-[9px] font-mono rounded">
-                      Google AI
-                    </span>
-                  </div>
-
-                  <div>
-                    <h4 className="font-editorial text-sm font-bold text-[#FFDF78]">
-                      Tạo AI Lookbook với khuôn mặt của bạn
-                    </h4>
-                    <p className="text-[11px] text-[#D5CABE] mt-0.5 leading-relaxed">
-                      Hướng dẫn chụp ảnh chuẩn, căn chỉnh crop ngũ quan, dệt nếp tơ lụa và xuất Master Prompt Google AI Studio.
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      if (onOpenAIFaceModal) onOpenAIFaceModal();
-                      else setIsInternalAIFaceModalOpen(true);
-                    }}
-                    className="w-full py-2.5 px-3 bg-[#8B1E1E] hover:bg-[#A82525] text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-                  >
-                    <Camera size={13} />
-                    <span>Bắt đầu Hóa Thân AI ngay</span>
-                  </button>
-                </div>
-
                 {/* Upload Photo Box */}
                 <div className="p-4 bg-white rounded-xl border-2 border-dashed border-[#C89B3C]/50 text-center space-y-2.5">
                   <div className="w-10 h-10 rounded-full bg-[#C89B3C]/10 text-[#C89B3C] mx-auto flex items-center justify-center">
@@ -548,7 +480,7 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
                   </div>
                   <div>
                     <span className="font-editorial text-xs font-bold text-[#1E1D1B] block">
-                      Thử Đồ Nhanh Trên Mannequin
+                      Thử Đồ Bằng Ảnh Của Bạn
                     </span>
                     <p className="text-[10px] text-[#7A7061] mt-0.5">
                       Tải ảnh chân dung rõ mặt để hiển thị trực tiếp trên người mẫu.
@@ -638,35 +570,30 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
           {/* Real-time Cultural Safeguard Alert Banner */}
           <CulturalWarningAlert checkResult={culturalCheck} />
 
-          {/* Mannequin Preview */}
+          {/* Mannequin Preview Area with Tactile Editorial Overlays */}
           <div className="flex-1 w-full min-h-[480px]">
-            <MannequinPreview selection={selection} interactive={true} />
+            <MannequinPreview
+              selection={selection}
+              interactive={true}
+              fabricTexture={selection.fabricTexture || 'silk'}
+              onFabricTextureChange={(tex) =>
+                setSelection((prev) => ({ ...prev, fabricTexture: tex }))
+              }
+              textureIntensity={selection.textureIntensity || 'medium'}
+              onTextureIntensityChange={(intensity) =>
+                setSelection((prev) => ({ ...prev, textureIntensity: intensity }))
+              }
+            />
           </div>
 
-          {/* Quick Actions below Mannequin */}
-          <div className="space-y-2">
+          {/* Quick Action below Mannequin */}
+          <div>
             <button
-              type="button"
-              onClick={() => {
-                if (onOpenDirectImageStudio) onOpenDirectImageStudio();
-                else onOpenResult();
-              }}
-              className="w-full py-3 px-4 bg-linear-to-r from-[#8B1E1E] via-[#A02424] to-[#8B1E1E] hover:from-[#721717] hover:to-[#721717] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-            >
-              <Sparkles size={16} className="text-[#FFDF78] animate-pulse" />
-              <span>TẠO ẢNH AI TRỰC TIẾP TỪ LOOK NÀY</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 bg-black/25 text-[#FFDF78] rounded">
-                Direct AI
-              </span>
-            </button>
-
-            <button
-              type="button"
               onClick={onOpenResult}
-              className="w-full py-2.5 px-4 bg-white hover:bg-[#F4EFEA] text-[#1E1D1B] border border-[#D5CABE] text-xs font-semibold rounded-xl transition-all shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 px-4 bg-[#8B1E1E] hover:bg-[#721717] text-white text-xs sm:text-sm font-bold uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
             >
-              <Eye size={14} />
-              <span>Xuất Thẻ Bản Phối ({outfitCode})</span>
+              <Sparkles size={16} />
+              <span>REMIX OUTFIT & XUẤT THẺ CHIA SẺ</span>
             </button>
           </div>
         </div>
@@ -805,6 +732,83 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
                       );
                     })}
                   </div>
+                </div>
+
+                {/* Tactile Fabric & Texture Overlays */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#1E1D1B] flex items-center gap-1.5">
+                      <Sparkles size={13} className="text-[#8B1E1E]" />
+                      Chất Liệu & Phủ Xúc Giác (Tactile Overlays)
+                    </span>
+                    <span className="text-[10px] font-mono text-[#8B1E1E] font-semibold">
+                      CSS TEXTURES
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    {FABRIC_TEXTURE_OPTIONS.map((tex) => {
+                      const isSelected = (selection.fabricTexture || 'silk') === tex.id;
+                      return (
+                        <div
+                          key={tex.id}
+                          onClick={() => setSelection((prev) => ({ ...prev, fabricTexture: tex.id }))}
+                          className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all ${
+                            isSelected
+                              ? 'border-[#8B1E1E] bg-[#8B1E1E]/5 shadow-xs ring-1 ring-[#8B1E1E]/20'
+                              : 'border-[#E5DDD0] bg-white hover:border-[#D0C4B3]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[#8B1E1E] font-bold text-xs">{tex.icon}</span>
+                              <span className="text-xs font-bold text-[#1E1D1B]">{tex.label}</span>
+                              <span className="text-[10px] text-[#8C8274] font-medium hidden sm:inline">
+                                ({tex.sublabel})
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-semibold text-[#8B1E1E]">
+                              {tex.origin}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-[#695F50] block mt-1 leading-snug">
+                            {tex.description}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Intensity control if active texture is not 'none' */}
+                  {(selection.fabricTexture || 'silk') !== 'none' && (
+                    <div className="mt-2.5 p-2 bg-[#F4EFEA] rounded-xl flex items-center justify-between">
+                      <span className="text-[11px] font-medium text-[#5E5446]">
+                        Mức độ phủ bề mặt:
+                      </span>
+                      <div className="flex items-center gap-1">
+                        {(['subtle', 'medium', 'rich'] as const).map((lvl) => {
+                          const currentIntensity = selection.textureIntensity || 'medium';
+                          const isLvl = currentIntensity === lvl;
+                          const label = lvl === 'subtle' ? 'Nhẹ (22%)' : lvl === 'medium' ? 'Vừa (40%)' : 'Rõ (62%)';
+                          return (
+                            <button
+                              key={lvl}
+                              onClick={() =>
+                                setSelection((prev) => ({ ...prev, textureIntensity: lvl }))
+                              }
+                              className={`px-2 py-0.5 text-[10px] font-semibold rounded-md transition-all cursor-pointer ${
+                                isLvl
+                                  ? 'bg-[#8B1E1E] text-white shadow-2xs'
+                                  : 'text-[#6B6152] hover:text-[#1E1D1B]'
+                              }`}
+                            >
+                              {label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -950,14 +954,6 @@ export const RemixEditor: React.FC<RemixEditorProps> = ({
         isOpen={isLookbookModalOpen}
         onClose={() => setIsLookbookModalOpen(false)}
         savedOutfits={savedOutfits}
-      />
-
-      {/* AI Face Try-On & Lookbook Modal */}
-      <AIFaceTryOnModal
-        isOpen={isInternalAIFaceModalOpen}
-        onClose={() => setIsInternalAIFaceModalOpen(false)}
-        currentSelection={selection}
-        onApplySelection={(newSel) => setSelection(newSel)}
       />
     </div>
   );
