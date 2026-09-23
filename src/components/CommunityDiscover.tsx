@@ -17,7 +17,7 @@ export const CommunityDiscover: React.FC<CommunityDiscoverProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
 
-  // Merge mock outfits with any locally saved user outfits
+  // Merge mock outfits with locally saved outfits
   const allOutfits = [...savedOutfits, ...MOCK_COMMUNITY_OUTFITS];
 
   const handleToggleLike = (id: string, e: React.MouseEvent) => {
@@ -29,7 +29,6 @@ export const CommunityDiscover: React.FC<CommunityDiscoverProps> = ({
   };
 
   const filteredOutfits = allOutfits.filter((outfit) => {
-    // Search query matching
     const query = searchQuery.toLowerCase().trim();
     const matchesQuery =
       !query ||
@@ -40,7 +39,6 @@ export const CommunityDiscover: React.FC<CommunityDiscoverProps> = ({
 
     if (!matchesQuery) return false;
 
-    // Filter categorization
     if (activeFilter === 'all') return true;
     if (activeFilter === 'ao-ngu-than') return outfit.selection.garmentId === 'ao-ngu-than';
     if (activeFilter === 'ao-dai') return outfit.selection.garmentId === 'ao-dai';
@@ -69,21 +67,21 @@ export const CommunityDiscover: React.FC<CommunityDiscoverProps> = ({
           </p>
         </div>
 
-        {/* Search input */}
+        {/* Search input with blueprint styling */}
         <div className="relative w-full md:w-72">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm theo phong cách, tên áo..."
-            className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#D5CABE] rounded-xl text-xs text-[#1E1D1B] placeholder-[#9E9484] focus:outline-hidden focus:border-[#8B1E1E]"
+            className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#D5CABE] rounded-xl text-xs text-[#1E1D1B] placeholder-[#9E9484] focus:outline-hidden focus:border-[#8B1E1E] shadow-xs"
           />
           <Search size={14} className="absolute left-3 top-3 text-[#9E9484]" />
         </div>
       </div>
 
       {/* Filter Chips Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 text-xs no-scrollbar">
+      <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 text-xs no-scrollbar">
         {[
           { id: 'all', label: 'Tất cả' },
           { id: 'ao-ngu-than', label: 'Áo ngũ thân' },
@@ -107,53 +105,73 @@ export const CommunityDiscover: React.FC<CommunityDiscoverProps> = ({
         ))}
       </div>
 
-      {/* Outfits Grid (12+ cards) */}
+      {/* Outfits Grid with Tarot & Blueprint Framing */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredOutfits.map((outfit) => {
+        {filteredOutfits.map((outfit, index) => {
           const isLiked = likedMap[outfit.id];
-          const likesCount = outfit.likesCount + (isLiked ? 1 : 0);
           const garment = GARMENTS.find((g) => g.id === outfit.selection.garmentId);
           const style = STYLES.find((s) => s.id === outfit.selection.styleId);
+          const romanNumeral = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV'][index % 14];
 
           return (
             <div
               key={outfit.id}
-              className="bg-[#FAF8F5] border border-[#E5DDD0] rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col group"
+              className="group relative bg-[#FAF8F5] border-2 border-[#E2D7C7] hover:border-[#8B1E1E]/60 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col"
             >
-              {/* Card Image / Mannequin Container */}
-              <div className="relative h-64 bg-[#F4EFEA] p-4 flex items-center justify-center border-b border-[#E5DDD0]/70 overflow-hidden">
-                <MannequinPreview selection={outfit.selection} interactive={false} compact={true} />
+              {/* Tarot / Museum Double Hairline Border (1px Inner Inset Frame) */}
+              <div className="absolute inset-2 border border-[#E8DFC0]/80 rounded-xl pointer-events-none z-20 transition-colors group-hover:border-[#8B1E1E]/30" />
 
-                {/* Top Badge: Mix Ratio */}
-                <div className="absolute top-3 left-3 bg-[#FAF8F5]/90 backdrop-blur-xs px-2.5 py-1 rounded-sm border border-[#E5DDD0] text-[10px] font-mono text-[#1E1D1B]">
+              {/* Tarot Corner Accents */}
+              <span className="absolute top-3 left-3 text-[8px] font-mono text-[#A89C89] z-20 pointer-events-none select-none">
+                {romanNumeral}
+              </span>
+              <span className="absolute top-3 right-3 text-[8px] font-mono text-[#A89C89] z-20 pointer-events-none select-none">
+                ◇
+              </span>
+
+              {/* Cropped Zoom-in Thumbnail Container (Focusing on waist, neckline, and drapery details) */}
+              <div className="relative h-72 bg-[radial-gradient(ellipse_at_50%_40%,_#FFFFFF_0%,_#F6F0E7_60%,_#EAE0D1_100%)] p-2 flex items-center justify-center border-b border-[#E5DDD0] overflow-hidden">
+                {/* 1px Blueprint Hairline Cross Grid */}
+                <div className="absolute inset-0 pointer-events-none opacity-20">
+                  <div className="absolute top-1/2 left-0 right-0 h-[1px] border-t border-dashed border-[#8B1E1E]" />
+                  <div className="absolute top-0 bottom-0 left-1/2 w-[1px] border-l border-dashed border-[#8B1E1E]" />
+                </div>
+
+                {/* The Zoomed Mannequin (125% scale crop with smooth hover zoom) */}
+                <div className="w-full h-full flex items-center justify-center scale-120 sm:scale-125 translate-y-2 group-hover:scale-130 transition-transform duration-500 ease-out">
+                  <MannequinPreview selection={outfit.selection} interactive={false} compact={true} />
+                </div>
+
+                {/* Top Badge: Mix Ratio Snapshot */}
+                <div className="absolute top-3 left-7 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-sm border border-[#E5DDD0] text-[9px] font-mono text-[#1E1D1B] z-20 shadow-xs">
                   Di sản {outfit.mixRatio.traditional}% · {outfit.mixRatio.modern}% Gen Z
                 </div>
 
                 {/* Like Button */}
                 <button
                   onClick={(e) => handleToggleLike(outfit.id, e)}
-                  className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-xs transition-colors cursor-pointer ${
+                  className={`absolute top-3 right-7 p-1.5 rounded-full backdrop-blur-xs transition-colors cursor-pointer z-20 ${
                     isLiked
                       ? 'bg-[#8B1E1E] text-white'
-                      : 'bg-white/80 hover:bg-white text-[#5E5547]'
+                      : 'bg-white/85 hover:bg-white text-[#5E5547]'
                   }`}
                   title="Thả tim outfit"
                 >
-                  <Heart size={14} className={isLiked ? 'fill-white' : ''} />
+                  <Heart size={13} className={isLiked ? 'fill-white' : ''} />
                 </button>
               </div>
 
-              {/* Card Meta Content */}
-              <div className="p-4 flex-1 flex flex-col justify-between">
+              {/* Card Meta Content with Blueprint lines */}
+              <div className="p-4 flex-1 flex flex-col justify-between relative z-10">
                 <div>
                   <div className="flex items-center justify-between text-[11px] text-[#786E5F] mb-1">
-                    <span className="font-mono uppercase font-semibold text-[#8B1E1E]">
+                    <span className="font-mono uppercase font-semibold text-[#8B1E1E] tracking-wider">
                       {outfit.code}
                     </span>
-                    <span>{outfit.createdAt}</span>
+                    <span className="text-[10px] text-[#9E9484]">{outfit.createdAt}</span>
                   </div>
 
-                  <h3 className="font-editorial text-lg font-bold text-[#1E1D1B] group-hover:text-[#8B1E1E] transition-colors">
+                  <h3 className="font-editorial text-lg font-bold text-[#1E1D1B] group-hover:text-[#8B1E1E] transition-colors leading-snug">
                     {outfit.name}
                   </h3>
 
@@ -175,7 +193,7 @@ export const CommunityDiscover: React.FC<CommunityDiscoverProps> = ({
                 </div>
 
                 {/* Card Footer: Creator info + "REMIX LOOK NÀY" CTA */}
-                <div className="pt-4 mt-4 border-t border-[#EAE1D3] flex items-center justify-between">
+                <div className="pt-3.5 mt-3.5 border-t border-[#EAE1D3] flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-[#8B1E1E]/15 text-[#8B1E1E] font-bold text-[10px] flex items-center justify-center">
                       {outfit.creator.avatar}

@@ -23,6 +23,7 @@ interface OutfitResultModalProps {
   isSaved: boolean;
   onShare: () => void;
   onContinueRemix: () => void;
+  onGenerateDirectImage?: () => void;
 }
 
 export const OutfitResultModal: React.FC<OutfitResultModalProps> = ({
@@ -33,7 +34,8 @@ export const OutfitResultModal: React.FC<OutfitResultModalProps> = ({
   onSaveOutfit,
   isSaved,
   onShare,
-  onContinueRemix
+  onContinueRemix,
+  onGenerateDirectImage
 }) => {
   if (!isOpen) return null;
 
@@ -156,8 +158,23 @@ export const OutfitResultModal: React.FC<OutfitResultModalProps> = ({
               “{scoreResult.whyThisWorks}”
             </p>
 
+            {/* Direct AI Image Generation CTA (gemini-3.1-flash-image-preview) */}
+            {onGenerateDirectImage && (
+              <button
+                type="button"
+                onClick={onGenerateDirectImage}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-linear-to-r from-[#8B1E1E] via-[#A02424] to-[#8B1E1E] hover:from-[#721717] hover:to-[#721717] text-white shadow-md transition-all cursor-pointer active:scale-98"
+              >
+                <Sparkles size={16} className="text-[#FFDF78] animate-pulse" />
+                <span>TẠO ẢNH AI TRỰC TIẾP TỪ LOOK NÀY</span>
+                <span className="text-[10px] font-mono px-1.5 py-0.5 bg-black/25 rounded text-[#FFDF78]">
+                  Direct AI
+                </span>
+              </button>
+            )}
+
             {/* Action Buttons: Lưu outfit, Remix tiếp, Chia sẻ */}
-            <div className="grid grid-cols-3 gap-2.5 pt-2">
+            <div className="grid grid-cols-3 gap-2.5 pt-1">
               <button
                 onClick={onSaveOutfit}
                 className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${

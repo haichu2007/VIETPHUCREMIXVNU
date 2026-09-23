@@ -6,13 +6,19 @@ interface HeaderProps {
   setActiveTab: (tab: 'home' | 'remix' | 'discover' | 'ai' | 'about') => void;
   onStartDemo: () => void;
   savedCount: number;
+  onOpenLookbook?: () => void;
+  onOpenAIFaceModal?: () => void;
+  onOpenDirectImageStudio?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   onStartDemo,
-  savedCount
+  savedCount,
+  onOpenLookbook,
+  onOpenAIFaceModal,
+  onOpenDirectImageStudio
 }) => {
   return (
     <header className="sticky top-0 z-50 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#EBE3D7] transition-all">
@@ -100,6 +106,46 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8B1E1E]" />
             )}
           </button>
+
+          {onOpenDirectImageStudio && (
+            <button
+              onClick={onOpenDirectImageStudio}
+              className="transition-colors relative py-1 hover:text-[#8B1E1E] flex items-center gap-1.5 text-[#8B1E1E] font-bold cursor-pointer group"
+              title="Tạo ảnh AI trực tiếp từ look (gemini-3.1-flash-image-preview)"
+            >
+              <Sparkles size={14} className="text-[#8B1E1E] animate-pulse" />
+              <span>Tạo Ảnh AI</span>
+              <span className="px-1.5 py-0.2 bg-[#8B1E1E] text-white rounded-full text-[9px] uppercase font-mono font-bold">
+                Direct
+              </span>
+            </button>
+          )}
+
+          {onOpenLookbook && (
+            <button
+              onClick={onOpenLookbook}
+              className="transition-colors relative py-1 hover:text-[#1E1D1B] flex items-center gap-1.5 text-[#8B1E1E] font-semibold cursor-pointer"
+            >
+              <span>Lookbook</span>
+              <span className="px-1.5 py-0.2 bg-[#8B1E1E]/10 rounded-full text-[9px] uppercase font-mono">
+                Vol. 01
+              </span>
+            </button>
+          )}
+
+          {onOpenAIFaceModal && (
+            <button
+              onClick={onOpenAIFaceModal}
+              className="transition-colors relative py-1 hover:text-[#8B1E1E] flex items-center gap-1.5 text-[#1E1D1B] font-semibold cursor-pointer group"
+              title="Tạo AI Lookbook với khuôn mặt của bạn"
+            >
+              <Sparkles size={13} className="text-[#C89B3C] group-hover:rotate-12 transition-transform" />
+              <span>Hóa Thân AI</span>
+              <span className="px-1.5 py-0.2 bg-[#C89B3C]/20 text-[#8C671C] rounded-full text-[9px] uppercase font-mono font-bold">
+                Mới
+              </span>
+            </button>
+          )}
         </nav>
 
         {/* Zone 3: Primary action + Demo mode trigger */}

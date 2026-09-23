@@ -85,6 +85,7 @@ export interface ColorOption {
   secondaryHex: string;
   textColor: string;
   culturalMeaning: string;
+  element: 'Kim' | 'Mộc' | 'Thủy' | 'Hỏa' | 'Thổ';
 }
 
 export interface OutfitSelection {
@@ -96,6 +97,17 @@ export interface OutfitSelection {
   accessoryId: string;
   styleId: string;
   colorId: string;
+  avatarId?: string;
+  customPhotoUrl?: string;
+}
+
+export interface AvatarModel {
+  id: string;
+  name: string;
+  gender: 'female' | 'male' | 'androgynous';
+  description: string;
+  avatarImg?: string;
+  faceStyle: 'female-classic' | 'female-modern' | 'male-sharp' | 'editorial' | 'custom';
 }
 
 export interface SavedOutfit {
@@ -128,3 +140,74 @@ export interface AIStylistPromptExample {
   suggestedSelection: OutfitSelection;
   reasoning: string;
 }
+
+export interface WeatherOption {
+  id: 'summer-hot' | 'autumn-cool' | 'spring-drizzle' | 'winter-cold';
+  name: string;
+  icon: string;
+  temperature: string;
+  description: string;
+  recommendedFabric: string;
+}
+
+export interface EventOption {
+  id: 'cafe-street' | 'temple-heritage' | 'gala-party' | 'university' | 'festival-concert';
+  name: string;
+  icon: string;
+  description: string;
+  formalityLevel: string;
+}
+
+export interface ColorHarmonyReport {
+  score: number;
+  ruleName: string;
+  status: 'excellent' | 'balanced' | 'daring' | 'clashing';
+  explanation: string;
+  culturalPhilosophy: string;
+  elementAffinity: string;
+  paletteColors: { name: string; hex: string }[];
+}
+
+export interface CulturalIntegrityCheck {
+  isSafe: boolean;
+  severity: 'safe' | 'caution' | 'warning';
+  title: string;
+  message: string;
+  reason: string;
+  respectfulSuggestion: string;
+  culturalContextRef: string;
+}
+
+export interface Lookbook {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  coverOutfit: SavedOutfit;
+  outfits: SavedOutfit[];
+  author: string;
+  createdAt: string;
+  theme: string;
+}
+
+export interface MasterPromptFormula {
+  id: string;
+  garmentName: string;
+  vietnameseTitle: string;
+  styleVibe: string;
+  englishPrompt: string;
+  anatomicalBreakdown: {
+    subjectIdentity: string;
+    traditionalGarment: string;
+    genZModernLayer: string;
+    studioLighting: string;
+    cameraGear: string;
+  };
+  editorialBackdrop: string;
+  accentColor: string;
+  garmentId: string;
+  suggestedSelection: OutfitSelection;
+}
+
+export type FaceTryOnStep = 'cta' | 'guideline' | 'crop' | 'generating' | 'result';
+

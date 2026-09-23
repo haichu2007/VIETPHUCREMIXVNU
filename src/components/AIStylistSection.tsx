@@ -6,9 +6,10 @@ import { Wand2, Sparkles, ArrowRight, CornerDownLeft, RefreshCw, CheckCircle2 } 
 
 interface AIStylistSectionProps {
   onApplyOutfit: (selection: OutfitSelection) => void;
+  onOpenAIFaceModal?: () => void;
 }
 
-export const AIStylistSection: React.FC<AIStylistSectionProps> = ({ onApplyOutfit }) => {
+export const AIStylistSection: React.FC<AIStylistSectionProps> = ({ onApplyOutfit, onOpenAIFaceModal }) => {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [generatedOutfit, setGeneratedOutfit] = useState<{
@@ -143,6 +144,33 @@ export const AIStylistSection: React.FC<AIStylistSectionProps> = ({ onApplyOutfi
           AI sẽ phân tích ngữ cảnh, lựa chọn loại Việt phục phù hợp, gợi ý phụ kiện Gen Z và cân bằng chuẩn tỷ lệ di sản.
         </p>
       </div>
+
+      {/* Featured CTA Banner: Tạo AI Lookbook với khuôn mặt của bạn */}
+      {onOpenAIFaceModal && (
+        <div className="max-w-3xl mx-auto mb-8 p-5 rounded-2xl bg-linear-to-r from-[#1C1816] via-[#2E241E] to-[#1C1816] border border-[#C89B3C]/60 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Sparkles size={14} className="text-[#C89B3C] animate-pulse" />
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#FFDF78] font-bold">
+                Quy Trình Kiểm Soát 5 Bước · Face Try-On
+              </span>
+            </div>
+            <h3 className="font-editorial text-lg font-bold text-[#FAF8F5]">
+              Tạo AI Lookbook với khuôn mặt của bạn
+            </h3>
+            <p className="text-xs text-[#D5CABE] max-w-lg leading-relaxed">
+              Kiểm soát góc chụp, công cụ crop oval chuẩn studio portrait, mô phỏng khâu tơ lụa và giải phẫu 5 lớp Master Prompt Google AI Studio.
+            </p>
+          </div>
+          <button
+            onClick={onOpenAIFaceModal}
+            className="px-5 py-3 bg-[#8B1E1E] hover:bg-[#A82525] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md shrink-0 flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+          >
+            <Sparkles size={14} />
+            <span>Thử Ngay</span>
+          </button>
+        </div>
+      )}
 
       {/* Input Box & Preset Chips */}
       <div className="bg-[#FAF8F5] border border-[#E5DDD0] rounded-2xl p-6 shadow-sm max-w-3xl mx-auto mb-10">

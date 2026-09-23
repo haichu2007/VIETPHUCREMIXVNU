@@ -8,7 +8,13 @@ import {
   StyleOption,
   ColorOption,
   SavedOutfit,
-  AIStylistPromptExample
+  AIStylistPromptExample,
+  AvatarModel,
+  WeatherOption,
+  EventOption,
+  OutfitSelection,
+  CulturalIntegrityCheck,
+  ColorHarmonyReport
 } from '../types';
 
 export const GARMENTS: Garment[] = [
@@ -501,7 +507,8 @@ export const COLORS: ColorOption[] = [
     hex: '#8B1E1E',
     secondaryHex: '#581010',
     textColor: '#FFFFFF',
-    culturalMeaning: 'Màu son chu sa trong nghệ thuật sơn mài truyền thống, đại diện cho năng lượng hưng thịnh, điềm lành và may mắn viên mãn.'
+    culturalMeaning: 'Màu son chu sa trong nghệ thuật sơn mài truyền thống, đại diện cho năng lượng hưng thịnh, điềm lành và may mắn viên mãn.',
+    element: 'Hỏa'
   },
   {
     id: 'imperial-gold',
@@ -510,7 +517,8 @@ export const COLORS: ColorOption[] = [
     hex: '#C89B3C',
     secondaryHex: '#8C671C',
     textColor: '#1E1D1B',
-    culturalMeaning: 'Màu của ánh thái dương và di sản hoàng gia Huế, gợi nhớ sắc óng ả của những kén tằm chín rộ trên nương dâu.'
+    culturalMeaning: 'Màu của ánh thái dương và di sản hoàng gia Huế, gợi nhớ sắc óng ả của những kén tằm chín rộ trên nương dâu.',
+    element: 'Thổ'
   },
   {
     id: 'indigo-blue',
@@ -519,7 +527,8 @@ export const COLORS: ColorOption[] = [
     hex: '#23395B',
     secondaryHex: '#142137',
     textColor: '#FFFFFF',
-    culturalMeaning: 'Sắc màu trầm mặc từ cây chàm của đồng bào vùng cao Tây Bắc, biểu trưng cho sự bền bỉ, mộc mạc và tri thức thâm sâu.'
+    culturalMeaning: 'Sắc màu trầm mặc từ cây chàm của đồng bào vùng cao Tây Bắc, biểu trưng cho sự bền bỉ, mộc mạc và tri thức thâm sâu.',
+    element: 'Thủy'
   },
   {
     id: 'jade-green',
@@ -528,7 +537,8 @@ export const COLORS: ColorOption[] = [
     hex: '#1E382B',
     secondaryHex: '#0F2117',
     textColor: '#FFFFFF',
-    culturalMeaning: 'Sắc xanh tĩnh lặng của khối ngọc bích cổ, mang ý nghĩa thanh khiết, trường thọ và sự bình an cho tâm hồn người mặc.'
+    culturalMeaning: 'Sắc xanh tĩnh lặng của khối ngọc bích cổ, mang ý nghĩa thanh khiết, trường thọ và sự bình an cho tâm hồn người mặc.',
+    element: 'Mộc'
   },
   {
     id: 'pearl-white',
@@ -537,7 +547,8 @@ export const COLORS: ColorOption[] = [
     hex: '#F4EFEA',
     secondaryHex: '#DED3C4',
     textColor: '#1E1D1B',
-    culturalMeaning: 'Màu trắng ngà óng ánh của ngọc trai biển khơi và tơ tằm nguyên bản, biểu tượng của sự thuần hậu, thanh tao không vướng bụi trần.'
+    culturalMeaning: 'Màu trắng ngà óng ánh của ngọc trai biển khơi và tơ tằm nguyên bản, biểu tượng của sự thuần hậu, thanh tao không vướng bụi trần.',
+    element: 'Kim'
   },
   {
     id: 'charcoal-black',
@@ -546,7 +557,8 @@ export const COLORS: ColorOption[] = [
     hex: '#1E1D1B',
     secondaryHex: '#0D0C0B',
     textColor: '#FFFFFF',
-    culturalMeaning: 'Sắc đen sâu lắng từ mực tàu trên giấy điệp, tạo nên uy quyền kiên định, sự bí ẩn và nét tương phản đồ họa sắc bén.'
+    culturalMeaning: 'Sắc đen sâu lắng từ mực tàu trên giấy điệp, tạo nên uy quyền kiên định, sự bí ẩn và nét tương phản đồ họa sắc bén.',
+    element: 'Thủy'
   },
   {
     id: 'lotus-pink',
@@ -555,7 +567,8 @@ export const COLORS: ColorOption[] = [
     hex: '#C47281',
     secondaryHex: '#8E3F4E',
     textColor: '#FFFFFF',
-    culturalMeaning: 'Sắc hồng e ấp của búp sen sớm mai trên hồ Tây, thể hiện nét duyên dáng, sức sống thanh xuân và vẻ đẹp tươi mới.'
+    culturalMeaning: 'Sắc hồng e ấp của búp sen sớm mai trên hồ Tây, thể hiện nét duyên dáng, sức sống thanh xuân và vẻ đẹp tươi mới.',
+    element: 'Hỏa'
   },
   {
     id: 'court-purple',
@@ -564,9 +577,364 @@ export const COLORS: ColorOption[] = [
     hex: '#532D4B',
     secondaryHex: '#32162C',
     textColor: '#FFFFFF',
-    culturalMeaning: 'Màu tím trầm mặc lắng đọng của cố đô Huế, gợi cảm thức hoài niệm, lòng thủy chung son sắt và chiều sâu lịch sử.'
+    culturalMeaning: 'Màu tím trầm mặc lắng đọng của cố đô Huế, gợi cảm thức hoài niệm, lòng thủy chung son sắt và chiều sâu lịch sử.',
+    element: 'Thổ'
   }
 ];
+
+export const AVATAR_MODELS: AvatarModel[] = [
+  {
+    id: 'avatar-female-classic',
+    name: 'Tố Nữ Cổ Điển',
+    gender: 'female',
+    description: 'Nét đẹp Á Đông đài các, tóc búi lụa thanh thoát, phong thái trang nhã.',
+    faceStyle: 'female-classic'
+  },
+  {
+    id: 'avatar-female-genz',
+    name: 'Hà Thành Gen Z',
+    gender: 'female',
+    description: 'Tóc ngắn cá tính, ánh nhìn sắc sảo, năng động và hiện đại.',
+    faceStyle: 'female-modern'
+  },
+  {
+    id: 'avatar-male-scholar',
+    name: 'Thư Sinh Nho Nhã',
+    gender: 'male',
+    description: 'Khuôn mặt góc cạnh cương trực, phong thái nho sĩ đương đại.',
+    faceStyle: 'male-sharp'
+  },
+  {
+    id: 'avatar-androgynous',
+    name: 'Haute Couture Editorial',
+    gender: 'androgynous',
+    description: 'Đường nét phi giới tính, chuẩn người mẫu sàn diễn quốc tế.',
+    faceStyle: 'editorial'
+  }
+];
+
+export const WEATHER_OPTIONS: WeatherOption[] = [
+  {
+    id: 'summer-hot',
+    name: 'Nắng Hè Oi Ả',
+    icon: '☀️',
+    temperature: '32°C - 38°C',
+    description: 'Thời tiết nóng bức, ưu tiên chất liệu lụa tơ, đũi mộc mỏng nhẹ, phom suông thoáng khí.',
+    recommendedFabric: 'Lụa tơ tằm Bảo Lộc, Vải đũi Nam Cao mộc mát'
+  },
+  {
+    id: 'autumn-cool',
+    name: 'Thu Hà Nội Se Lạnh',
+    icon: '🍂',
+    temperature: '20°C - 26°C',
+    description: 'Gió heo may mát dịu, lý tưởng nhất cho việc phối nhiều lớp (layering), gấm hoa chìm.',
+    recommendedFabric: 'Gấm dệt Vạn Phúc, Satin óng nhẹ, Lụa the 2 lớp'
+  },
+  {
+    id: 'spring-drizzle',
+    name: 'Mưa Xuân & Lễ Hội',
+    icon: '🌸',
+    temperature: '18°C - 23°C',
+    description: 'Không khí lễ hội đầu năm, sắc màu tươi sáng rạng rỡ (Đỏ sơn mài, Vàng hoàng yến).',
+    recommendedFabric: 'Tơ sống tơ sen, gấm thêu cung đình'
+  },
+  {
+    id: 'winter-cold',
+    name: 'Đông Lạnh Miền Bắc',
+    icon: '❄️',
+    temperature: '12°C - 17°C',
+    description: 'Thời tiết giá buốt, áo ngũ thân chần bông hoặc áo đối khâm khoác ngoài giữ ấm.',
+    recommendedFabric: 'Gấm chần bông, Nỉ dạ cao cấp phối viền cổ phục'
+  }
+];
+
+export const EVENT_OPTIONS: EventOption[] = [
+  {
+    id: 'cafe-street',
+    name: 'Dạo Phố & Cafe Cuối Tuần',
+    icon: '☕',
+    description: 'Thoải mái, phóng khoáng, dễ vận động, chụp ảnh check-in phong cách Gen Z.',
+    formalityLevel: 'Casual & Trendy'
+  },
+  {
+    id: 'temple-heritage',
+    name: 'Đi Chùa / Không Gian Di Sản',
+    icon: '🏮',
+    description: 'Trang nghiêm, kín đáo, chuẩn mực văn hóa (cổ đứng cao, cúc cài ngay ngắn).',
+    formalityLevel: 'Nghi lễ & Tôn nghiêm'
+  },
+  {
+    id: 'gala-party',
+    name: 'Dạ Tiệc Tối & Gala Night',
+    icon: '✨',
+    description: 'Sang trọng, quyền quý, lộng lẫy với ánh gấm, phụ kiện bạc hoặc vàng.',
+    formalityLevel: 'High Fashion & Black Tie'
+  },
+  {
+    id: 'university',
+    name: 'Đi Học Đại Học / Thuyết Trình',
+    icon: '🎓',
+    description: 'Trẻ trung, thanh lịch, kết hợp sneaker, túi tote và quần âu hoặc denim.',
+    formalityLevel: 'Smart Casual'
+  },
+  {
+    id: 'festival-concert',
+    name: 'Lễ Hội Âm Nhạc / Concert',
+    icon: '🎸',
+    description: 'Bùng nổ cá tính, nổi bật giữa đám đông, Y2K retro hoặc Streetwear phá cách.',
+    formalityLevel: 'Expressive & Bold'
+  }
+];
+
+// Helper: Cultural Safeguard Integrity Checker
+export const checkCulturalIntegrity = (selection: OutfitSelection): CulturalIntegrityCheck => {
+  const { garmentId, styleId, bottomId, headwearId } = selection;
+
+  // Rule 1: Áo Đối Khâm cung đình đại triều phối quá phá cách Y2K
+  if (garmentId === 'ao-doi-kham' && styleId === 'style-y2k') {
+    return {
+      isSafe: false,
+      severity: 'warning',
+      title: 'Lưu Ý Tính Trang Nghiêm Của Áo Đối Khâm',
+      message: 'Áo Đối Khâm là phẩm phục trang trọng bậc nhất trong hoàng cung triều Lê - Nguyễn. Phối cùng phong cách Y2K vị lai nổi loạn có thể làm mai một tính tôn nghiêm của trang phục cung đình.',
+      reason: 'Cổ phục cung đình thường gắn liền với sự cân xứng, kín đáo và vị thế lễ nghi quốc gia.',
+      respectfulSuggestion: 'Khuyên dùng phong cách "Creative Editorial" hoặc "Heritage Old Money", phối cùng Quần tây may đo hoặc Quần lụa ống rộng để giữ vẻ vương giả mà vẫn hiện đại.',
+      culturalContextRef: 'Lễ phục triều Lê - Nguyễn (Khâm Định Đại Nam Hội Điển Sự Lệ)'
+    };
+  }
+
+  // Rule 2: Khăn Đóng cung đình phối cùng Áo Bà Ba Nam Bộ
+  if (garmentId === 'ao-ba-ba' && headwearId === 'head-khan-dong') {
+    return {
+      isSafe: false,
+      severity: 'caution',
+      title: 'Xung Đột Ngữ Cảnh Văn Hóa Vùng Miền',
+      message: 'Khăn đóng (khăn xếp chữ Nhân) theo nghi thức phương Bắc / cung đình Huế khi phối cùng Áo Bà Ba sông nước Nam Bộ tạo cảm giác khiên cưỡng, không đồng nhất về văn hóa sinh hoạt.',
+      reason: 'Áo bà ba gắn với lối sống phóng khoáng, lao động sông nước miền Tây; khăn đóng gắn với lễ nghi nho giáo kinh kỳ.',
+      respectfulSuggestion: 'Hãy thử đổi sang Khăn Bandana tơ tằm, Mũ beret hiện đại hoặc để tóc tự nhiên cài kẹp ngọc.',
+      culturalContextRef: 'Văn hóa trang phục dân gian Nam Bộ & Bắc Bộ'
+    };
+  }
+
+  // Rule 3: Áo Tứ Thân phối cùng Quần Cargo túi hộp quá hầm hố
+  if (garmentId === 'ao-tu-than' && bottomId === 'pants-cargo-minimal') {
+    return {
+      isSafe: false,
+      severity: 'caution',
+      title: 'Độ Tương Phản Phom Dáng Cần Cân Nhắc',
+      message: 'Áo Tứ Thân Kinh Bắc mang nét duyên dáng, bay bổng đặc trưng của liền chị quan họ. Quần cargo túi hộp quân đội tạo cảm giác nặng nề, lấn át nét thanh thoát của vạt áo và dải lụa ruột bao.',
+      reason: 'Cấu trúc áo tứ thân có 4 vạt rủ mềm và thắt lưng buộc nút, đòi hỏi phần thân dưới có độ suông êm dịu.',
+      respectfulSuggestion: 'Đề xuất đổi sang Chân váy dập ly midi bay bổng hoặc Quần lụa ống rộng đen truyền thống.',
+      culturalContextRef: 'Trang phục Quan họ Bắc Ninh & Hội Lim'
+    };
+  }
+
+  // Default Safe
+  return {
+    isSafe: true,
+    severity: 'safe',
+    title: 'Bản Phối Chuẩn Mực Văn Hóa',
+    message: 'Bản phối kết hợp hài hòa giữa cấu trúc cổ phục truyền thống và các chi tiết cách tân hiện đại của Gen Z mà không làm biến dạng giá trị cốt lõi.',
+    reason: 'Các thành phần tôn trọng phom dáng, số lượng vạt áo, hàng cúc và thần thái nguyên bản.',
+    respectfulSuggestion: 'Bạn có thể tự tin diện bản phối này khi ra phố, đi sự kiện hoặc xuất thẻ lookbook chia sẻ!',
+    culturalContextRef: 'Nguyên lý bảo tồn động (Dynamic Heritage Preservation)'
+  };
+};
+
+// Helper: Color Harmony Checker
+export const checkColorHarmony = (selection: OutfitSelection): ColorHarmonyReport => {
+  const garmentColor = COLORS.find((c) => c.id === selection.colorId) || COLORS[0];
+  const element = garmentColor.element;
+
+  // Determine complementary harmony
+  let ruleName = 'Ngũ Hành Tương Sinh';
+  let elementAffinity = 'Hỏa sinh Thổ · Di sản bền vững';
+  let score = 92;
+  let status: 'excellent' | 'balanced' | 'daring' | 'clashing' = 'excellent';
+  let explanation = '';
+  let culturalPhilosophy = '';
+
+  switch (element) {
+    case 'Hỏa': // Đỏ sơn mài, Hồng sen đào
+      ruleName = 'Sơn Mài Chu Sa & Hỏa Sinh Thổ';
+      elementAffinity = 'Hỏa sinh Thổ · Vượng khí & Hưng thịnh';
+      score = 96;
+      status = 'excellent';
+      explanation = `Màu ${garmentColor.name} tỏa ra năng lượng ấm áp, thịnh vượng. Khi phối cùng tông đen hoặc xanh denim tạo nên thế tương phản đồ họa mạnh mẽ, hút mắt.`;
+      culturalPhilosophy = 'Triết lý âm dương hòa hợp: Sắc đỏ son đại diện cho khí dương quang minh, khi có nền trầm cân bằng sẽ tạo nên thần thái trang nhã, quyền quý.';
+      break;
+
+    case 'Thủy': // Xanh chàm, Đen mực tàu
+      ruleName = 'Thủy Mặc Kinh Bắc & Thủy Dưỡng Mộc';
+      elementAffinity = 'Thủy dưỡng Mộc · Chiều sâu trầm mặc';
+      score = 94;
+      status = 'excellent';
+      explanation = `Tông màu ${garmentColor.name} đại diện cho chiều sâu trí tuệ và sự kiên định. Dễ dàng phối với sneaker trắng ngà hoặc phụ kiện kim loại bạc.`;
+      culturalPhilosophy = 'Đạo của nước là nhu thuận nhưng nội lực sâu xa; màu chàm cổ truyền gắn bó với nếp sống thanh bần tao nhã của danh sĩ xưa.';
+      break;
+
+    case 'Thổ': // Vàng hoàng yến, Tím cung đình
+      ruleName = 'Hoàng Triều Vương Giả & Thổ Sinh Kim';
+      elementAffinity = 'Thổ sinh Kim · Tinh hoa hoàng cung';
+      score = 95;
+      status = 'excellent';
+      explanation = `Sắc ${garmentColor.name} gợi cảm giác vương giả, uy nghiêm của chốn hoàng cung Huế, phối tuyệt đẹp với kiềng bạc hoặc trang sức ngọc.`;
+      culturalPhilosophy = 'Trung cung Thổ đức: Đất nuôi dưỡng vạn vật, màu hoàng thổ tượng trưng cho đức độ bao dung và sự vững vàng của sơn hà.';
+      break;
+
+    case 'Mộc': // Xanh ngọc lục bảo
+      ruleName = 'Ngọc Bích Thanh Khiết & Mộc Sinh Hỏa';
+      elementAffinity = 'Mộc sinh Hỏa · Sinh khí thanh tân';
+      score = 91;
+      status = 'balanced';
+      explanation = `Sắc ${garmentColor.name} thanh nhã, tôn da người Việt, mang lại cảm giác an yên và mát mắt khi nhìn.`;
+      culturalPhilosophy = 'Ngọc dưỡng người, người dưỡng ngọc; màu xanh ngọc biểu thị phẩm chất quân tử khiêm cung, thuần hậu.';
+      break;
+
+    case 'Kim': // Trắng ngọc trai
+      ruleName = 'Bạch Ngọc Thuần Khiết & Kim Sinh Thủy';
+      elementAffinity = 'Kim sinh Thủy · Tao nhã trường cửu';
+      score = 93;
+      status = 'excellent';
+      explanation = `Sắc ${garmentColor.name} là tấm toan hoàn hảo cho mọi kiểu phối đồ, tôn vinh mọi đường cắt may tinh vi nhất.`;
+      culturalPhilosophy = 'Vẻ đẹp không cầu kỳ nhưng trường tồn; sắc trắng tơ tằm nguyên bản nhắc nhở về sự chân thật, thanh bạch.';
+      break;
+
+    default:
+      score = 88;
+      status = 'balanced';
+      explanation = 'Bản phối màu cân đối, mang đậm hơi thở thời trang hiện đại.';
+      culturalPhilosophy = 'Sự hòa hợp giữa nét xưa và nay.';
+  }
+
+  return {
+    score,
+    ruleName,
+    status,
+    explanation,
+    culturalPhilosophy,
+    elementAffinity,
+    paletteColors: [
+      { name: garmentColor.name, hex: garmentColor.hex },
+      { name: 'Nền Đối Ứng', hex: garmentColor.secondaryHex },
+      { name: 'Phụ Kiện Trắng Ngà', hex: '#FAF8F5' },
+      { name: 'Điểm Nhấn Hoàn Thiện', hex: '#1E1D1B' }
+    ]
+  };
+};
+
+// Helper: Weather & Event Suggestion Engine
+export const getWeatherEventSuggestion = (
+  weatherId: string,
+  eventId: string
+): { selection: OutfitSelection; reasoning: string; title: string } => {
+  // Scenario 1: Summer + Cafe Street
+  if (weatherId === 'summer-hot' && eventId === 'cafe-street') {
+    return {
+      title: 'Bà Ba Gió Mát Cafe Cuối Tuần',
+      selection: {
+        garmentId: 'ao-ba-ba',
+        bottomId: 'pants-denim-wide',
+        headwearId: 'head-none',
+        footwearId: 'shoes-chunky-sneaker',
+        bagId: 'bag-shoulder-leather',
+        accessoryId: 'acc-sunglasses-oval',
+        styleId: 'style-street',
+        colorId: 'imperial-gold'
+      },
+      reasoning: 'Áo bà ba lụa tơ vàng hoàng yến xẻ tà mát rượi, phối cùng denim thụng năng động, kính oval Y2K và túi kẹp nách; vừa thoáng khí dưới nắng hè 35°C vừa cực kỳ ăn ảnh khi ngồi cafe phố cổ.'
+    };
+  }
+
+  // Scenario 2: Temple / Heritage + Any weather
+  if (eventId === 'temple-heritage') {
+    return {
+      title: 'Ngũ Thân Trang Nghiêm Hành Hương',
+      selection: {
+        garmentId: 'ao-ngu-than',
+        bottomId: 'pants-silk-wide',
+        headwearId: 'head-khan-dong',
+        footwearId: 'shoes-embroidered-flats',
+        bagId: 'bag-clutch-lacquer',
+        accessoryId: 'acc-silver-kieng',
+        styleId: 'style-old-money',
+        colorId: 'indigo-blue'
+      },
+      reasoning: 'Áo ngũ thân cổ cao 5 cúc khép kín, quần lụa đen buông rủ cùng kiềng bạc chạm hoa văn trống đồng; đảm bảo 100% sự tôn kính, trang nghiêm nơi cửa Phật và không gian di sản.'
+    };
+  }
+
+  // Scenario 3: Gala Party / Dạ tiệc
+  if (eventId === 'gala-party') {
+    return {
+      title: 'Đối Khâm Hoàng Gia Dạ Tiệc Đêm',
+      selection: {
+        garmentId: 'ao-doi-kham',
+        bottomId: 'pants-tailored-high',
+        headwearId: 'head-man-cach-tan',
+        footwearId: 'shoes-leather-loafer',
+        bagId: 'bag-clutch-lacquer',
+        accessoryId: 'acc-jade-earrings',
+        styleId: 'style-creative',
+        colorId: 'court-purple'
+      },
+      reasoning: 'Áo đối khâm tím cung đình viền nẹp gấm dệt kim sa, phối mấn đính ngọc và clutch sơn mài; khí chất uy nghi, nổi bật tuyệt đối tại thảm đỏ sự kiện thời trang.'
+    };
+  }
+
+  // Scenario 4: Winter Cold + University
+  if (weatherId === 'winter-cold') {
+    return {
+      title: 'Áo Dài Đông Ấm Giảng Đường',
+      selection: {
+        garmentId: 'ao-dai',
+        bottomId: 'pants-tailored-high',
+        headwearId: 'head-beret-modern',
+        footwearId: 'shoes-chelsea-boots',
+        bagId: 'bag-tote-dongho',
+        accessoryId: 'acc-headphones',
+        styleId: 'style-minimal',
+        colorId: 'lacquer-red'
+      },
+      reasoning: 'Áo dài lụa gấm đỏ sơn mài ấm áp kết hợp mũ beret cổ điển, chelsea boots giữ nhiệt và túi tote đựng laptop; thanh lịch, ấm áp và giàu cảm hứng học tập.'
+    };
+  }
+
+  // Scenario 5: Festival / Concert
+  if (eventId === 'festival-concert') {
+    return {
+      title: 'Tứ Thân Y2K Rave & Festival',
+      selection: {
+        garmentId: 'ao-tu-than',
+        bottomId: 'skirt-asymmetric-wrap',
+        headwearId: 'head-bandana-silk',
+        footwearId: 'shoes-chunky-sneaker',
+        bagId: 'bag-crossbody-nylon',
+        accessoryId: 'acc-sunglasses-oval',
+        styleId: 'style-y2k',
+        colorId: 'lacquer-red'
+      },
+      reasoning: 'Yếm đào phối áo tứ thân buông lơi, chân váy bất đối xứng cùng bandana tơ tằm và sneaker; vũ đạo bùng nổ, phá cách vị lai mà vẫn đậm bản sắc dân tộc.'
+    };
+  }
+
+  // Default Fallback:
+  return {
+    title: 'Việt Phục Remix Đương Đại',
+    selection: {
+      garmentId: 'ao-ngu-than',
+      bottomId: 'pants-denim-wide',
+      headwearId: 'head-none',
+      footwearId: 'shoes-chunky-sneaker',
+      bagId: 'bag-crossbody-nylon',
+      accessoryId: 'acc-headphones',
+      styleId: 'style-street',
+      colorId: 'lacquer-red'
+    },
+    reasoning: 'Bản phối kinh điển dung hòa giữa áo ngũ thân di sản và phong cách đường phố năng động của Gen Z.'
+  };
+};
+
 
 export const MOCK_COMMUNITY_OUTFITS: SavedOutfit[] = [
   {
