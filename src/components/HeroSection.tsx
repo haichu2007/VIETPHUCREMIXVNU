@@ -1,6 +1,7 @@
 import React from 'react';
 import { OutfitSelection } from '../types';
 import { MannequinPreview } from './MannequinPreview';
+import { GARMENTS, BOTTOM_PIECES, FOOTWEAR_PIECES, COLORS, STYLES } from '../data/mockData';
 import { Sparkles, Play, ArrowRight, Wand2, ShieldCheck, Compass, HeartHandshake } from 'lucide-react';
 
 interface HeroSectionProps {
@@ -18,6 +19,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onOpenAIFaceModal,
   heroSelection
 }) => {
+  const garment = GARMENTS.find((g) => g.id === heroSelection.garmentId) || GARMENTS[0];
+  const color = COLORS.find((c) => c.id === heroSelection.colorId) || COLORS[0];
+  const bottom = BOTTOM_PIECES.find((b) => b.id === heroSelection.bottomId) || BOTTOM_PIECES[0];
+  const footwear = FOOTWEAR_PIECES.find((f) => f.id === heroSelection.footwearId) || FOOTWEAR_PIECES[0];
+  const style = STYLES.find((s) => s.id === heroSelection.styleId) || STYLES[0];
+
   return (
     <div className="relative overflow-hidden bg-[#FAF8F5] border-b border-[#E5DDD0] pt-6 pb-16 md:py-24">
       {/* 1. Giant Bleed Editorial Watermark Typography */}
@@ -178,34 +185,47 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
 
           {/* Right Column: Visual Overlap Showcase (Couture Silhouette Magazine Cover) */}
-          <div className="lg:col-span-5 flex flex-col items-center relative">
-            {/* Architectural Hairline Frame Behind Model */}
-            <div className="absolute -inset-3 border border-[#E0D5C1] rounded-3xl pointer-events-none hidden sm:block opacity-60" />
-
-            <div className="w-full max-w-md h-[490px] relative z-10 shadow-xl rounded-2xl overflow-hidden border border-[#D5C9B5]">
-              <MannequinPreview selection={heroSelection} interactive={true} compact={false} />
-
-              {/* Editorial Fashion Magazine Badge Stamp */}
-              <div className="absolute top-4 right-4 bg-[#1E1D1B] text-[#FAF8F5] p-2.5 rounded-xl border border-[#3D3A36] shadow-md flex flex-col items-center justify-center text-center">
-                <span className="text-[8px] font-mono uppercase tracking-widest text-[#C89B3C] font-semibold">
-                  LOOK OF THE DAY
-                </span>
-                <span className="font-editorial text-sm font-bold mt-0.5">
-                  REMIX #027
+          <div className="lg:col-span-5 flex flex-col items-center relative w-full">
+            {/* Editorial Header Pill directly above frame */}
+            <div className="w-full max-w-md flex items-center justify-between px-1 mb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#8B1E1E] animate-ping" />
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#8B1E1E]">
+                  Trực Tuyến · Live Showcase
                 </span>
               </div>
+              <div className="bg-[#1E1D1B] text-[#FAF8F5] px-2.5 py-1 rounded-lg border border-[#3D3A36] shadow-xs flex items-center gap-1.5">
+                <span className="text-[9px] font-mono uppercase tracking-widest text-[#C89B3C] font-semibold">
+                  LOOK:
+                </span>
+                <span className="font-editorial text-xs font-bold text-white">
+                  REMIX #{style.traditionalRatio}{color.element === 'Hỏa' ? '01' : '02'}
+                </span>
+              </div>
+            </div>
 
-              {/* Floating Testimonial Pill with Overlap */}
-              <div className="absolute -bottom-2 -left-2 bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-[#E5DDD0] shadow-lg max-w-[270px] hidden sm:block">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="w-2 h-2 rounded-full bg-[#8B1E1E] animate-ping" />
-                  <span className="text-[10px] font-mono uppercase text-[#8B1E1E] font-bold">
-                    Phối Đồ Trực Tuyến Live
-                  </span>
+            {/* Architectural Hairline Frame Behind Model */}
+            <div className="w-full max-w-md relative">
+              <div className="absolute -inset-2 border border-[#E0D5C1] rounded-3xl pointer-events-none hidden sm:block opacity-60" />
+
+              <div className="w-full h-[500px] relative z-10 shadow-xl rounded-2xl overflow-hidden border border-[#D5C9B5]">
+                <MannequinPreview selection={heroSelection} interactive={true} compact={false} />
+
+                {/* Floating Live Outfit Details Card with Dynamic Data */}
+                <div className="absolute bottom-14 left-3 bg-white/95 backdrop-blur-md p-3 rounded-xl border border-[#E5DDD0] shadow-md max-w-[280px] hidden sm:block z-30 animate-in fade-in duration-200">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#8B1E1E]" />
+                    <span className="text-[10px] font-mono uppercase text-[#8B1E1E] font-bold">
+                      Đang Trình Diễn
+                    </span>
+                    <span className="text-[10px] text-[#8C8270] font-mono">
+                      · {style.name}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#1E1D1B] font-semibold leading-snug">
+                    {garment.name} <span className="text-[#8B1E1E]">({color.name})</span> + {bottom.name} + {footwear.name}
+                  </p>
                 </div>
-                <p className="text-xs text-[#332E27] font-medium leading-tight">
-                  Áo Ngũ Thân Đỏ Sơn Mài + Denim Gen Z + Chunky Sneaker
-                </p>
               </div>
             </div>
           </div>

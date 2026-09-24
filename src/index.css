@@ -162,19 +162,51 @@
   opacity: 0.40;
 }
 
-/* Custom scrollbar for sleek horizontal tabs and selectors */
+/* Sleek Luxury Custom Scrollbar (Cross-browser & webkit) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #D5CABE #FAF6F0;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #F3ECE2;
+  background: #FAF6F0;
+  border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #D8CEBE;
-  border-radius: 3px;
+  background: #D5CABE;
+  border-radius: 10px;
+  border: 1px solid #FAF6F0;
+  transition: background-color 0.2s ease;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #B6A792;
+  background: #8B1E1E;
 }
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #D5CABE #FAF6F0;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #FAF6F0;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #D5CABE;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #8B1E1E;
+}
+
 

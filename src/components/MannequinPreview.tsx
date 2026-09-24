@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { OutfitSelection, FabricTextureType, TextureIntensityType } from '../types';
+import { OutfitSelection, FabricTextureType, TextureIntensityType, GenderType, TuckStyleType } from '../types';
 import {
   GARMENTS,
   BOTTOM_PIECES,
@@ -7,9 +7,11 @@ import {
   FOOTWEAR_PIECES,
   BAG_PIECES,
   ACCESSORY_PIECES,
-  COLORS
+  COLORS,
+  AVATAR_MODELS,
+  SKIN_TONE_OPTIONS
 } from '../data/mockData';
-import { ZoomIn, ZoomOut, Sparkles, Info } from 'lucide-react';
+import { ZoomIn, ZoomOut, Sparkles, Info, Scissors } from 'lucide-react';
 
 export interface FabricTextureMeta {
   id: FabricTextureType;
@@ -71,6 +73,8 @@ interface MannequinPreviewProps {
   onFabricTextureChange?: (tex: FabricTextureType) => void;
   textureIntensity?: TextureIntensityType;
   onTextureIntensityChange?: (intensity: TextureIntensityType) => void;
+  onGenderChange?: (gender: GenderType) => void;
+  onTuckStyleChange?: (tuck: TuckStyleType) => void;
 }
 
 export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
@@ -80,7 +84,9 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
   fabricTexture: controlledTexture,
   onFabricTextureChange,
   textureIntensity: controlledIntensity,
-  onTextureIntensityChange
+  onTextureIntensityChange,
+  onGenderChange,
+  onTuckStyleChange
 }) => {
   const [zoomLevel, setZoomLevel] = useState<'full' | 'torso'>('full');
   const [localTexture, setLocalTexture] = useState<FabricTextureType>(
@@ -94,6 +100,33 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
   const activeTexture = controlledTexture ?? selection.fabricTexture ?? localTexture;
   const activeIntensity = controlledIntensity ?? selection.textureIntensity ?? localIntensity;
   const showTexture = activeTexture !== 'none';
+
+  const garment = GARMENTS.find((g) => g.id === selection.garmentId) || GARMENTS[0];
+  const bottom = BOTTOM_PIECES.find((b) => b.id === selection.bottomId) || BOTTOM_PIECES[0];
+  const headwear = HEADWEAR_PIECES.find((h) => h.id === selection.headwearId) || HEADWEAR_PIECES[0];
+  const footwear = FOOTWEAR_PIECES.find((f) => f.id === selection.footwearId) || FOOTWEAR_PIECES[0];
+  const bag = BAG_PIECES.find((b) => b.id === selection.bagId) || BAG_PIECES[0];
+  const accessory = ACCESSORY_PIECES.find((a) => a.id === selection.accessoryId) || ACCESSORY_PIECES[0];
+  const color = COLORS.find((c) => c.id === selection.colorId) || COLORS[0];
+
+  // Active Character Archetype and Skin Tone
+  const activeAvatar = AVATAR_MODELS.find((a) => a.id === selection.avatarId) || AVATAR_MODELS[0];
+  const activeGender: GenderType = selection.gender || activeAvatar.gender || 'female';
+  const activeTuck: TuckStyleType = selection.tuckStyle || 'untucked';
+  const isMale = activeGender === 'male';
+
+  const activeSkin =
+    SKIN_TONE_OPTIONS.find((s) => s.id === selection.skinToneId) ||
+    SKIN_TONE_OPTIONS.find((s) => s.id === (selection.skinTone || activeAvatar.skinTone)) ||
+    SKIN_TONE_OPTIONS[0];
+
+  const skinBase = activeSkin.hex;
+  const skinShadow = activeSkin.shadowHex;
+  const blushColor = activeAvatar.blushHex || '#E8A598';
+  const lipColor = activeAvatar.lipHex || '#9C3A3A';
+
+  const primaryColor = color.hex;
+  const secondaryColor = color.secondaryHex;
 
   const handleTextureSelect = (tex: FabricTextureType) => {
     setLocalTexture(tex);
@@ -117,17 +150,6 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
 
   const activeTextureMeta =
     FABRIC_TEXTURE_OPTIONS.find((t) => t.id === activeTexture) || FABRIC_TEXTURE_OPTIONS[0];
-
-  const garment = GARMENTS.find((g) => g.id === selection.garmentId) || GARMENTS[0];
-  const bottom = BOTTOM_PIECES.find((b) => b.id === selection.bottomId) || BOTTOM_PIECES[0];
-  const headwear = HEADWEAR_PIECES.find((h) => h.id === selection.headwearId) || HEADWEAR_PIECES[0];
-  const footwear = FOOTWEAR_PIECES.find((f) => f.id === selection.footwearId) || FOOTWEAR_PIECES[0];
-  const bag = BAG_PIECES.find((b) => b.id === selection.bagId) || BAG_PIECES[0];
-  const accessory = ACCESSORY_PIECES.find((a) => a.id === selection.accessoryId) || ACCESSORY_PIECES[0];
-  const color = COLORS.find((c) => c.id === selection.colorId) || COLORS[0];
-
-  const primaryColor = color.hex;
-  const secondaryColor = color.secondaryHex;
 
   return (
     <div
@@ -153,94 +175,122 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
         <div className="absolute bottom-16 left-6 right-6 h-[1px] border-t border-dashed border-[#DDD2C0]/60" />
       </div>
 
-      {/* Top Editorial Bar */}
-      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between z-20 text-xs tracking-wider gap-2">
-        <div className="flex items-center gap-2">
-          <span className="font-editorial text-sm font-bold tracking-widest text-[#1E1D1B] uppercase">
+      {/* Top Editorial Header Bar (Separated & Clean) */}
+      <div className="w-full flex items-center justify-between z-20 pb-2 border-b border-[#E5DDD0]/60 text-xs">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="font-editorial text-sm font-bold tracking-widest text-[#1E1D1B] uppercase shrink-0">
             Việt Phục Remix
           </span>
-          <span className="text-[#A39988]">/</span>
-          <span className="text-[#8B1E1E] font-semibold uppercase text-[11px] tracking-wider truncate max-w-[130px]">
+          <span className="text-[#A39988] shrink-0">/</span>
+          <span className="text-[#8B1E1E] font-semibold uppercase text-xs tracking-wider truncate">
             {garment.name}
           </span>
         </div>
 
         {interactive && (
-          <div className="flex flex-wrap items-center gap-1.5 bg-white/95 backdrop-blur-md px-2 py-1 rounded-xl border border-[#E5DDD0] text-[#554E43] shadow-xs">
-            {/* Tactile Fabric Texture Segmented Selector */}
-            <div className="flex items-center p-0.5 bg-[#F4EFEA] rounded-lg">
-              {FABRIC_TEXTURE_OPTIONS.map((tex) => {
-                const isSelected = activeTexture === tex.id;
-                return (
-                  <button
-                    key={tex.id}
-                    onClick={() => handleTextureSelect(tex.id)}
-                    className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
-                      isSelected
-                        ? 'bg-[#8B1E1E] text-white shadow-2xs'
-                        : 'text-[#695F50] hover:text-[#1E1D1B]'
-                    }`}
-                    title={`${tex.label} — ${tex.description}`}
-                  >
-                    <span>{tex.icon}</span>
-                    <span className="hidden md:inline">{tex.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Tactile Intensity Cycler */}
-            {activeTexture !== 'none' && (
-              <button
-                onClick={handleIntensityCycle}
-                className="px-2 py-1 text-[10px] font-semibold bg-[#F4EFEA] hover:bg-[#EAE2D5] text-[#554E43] rounded-md transition-colors cursor-pointer whitespace-nowrap"
-                title="Thay đổi độ phủ xúc giác: Nhẹ · Vừa · Rõ"
-              >
-                Độ phủ:{' '}
-                <span className="text-[#8B1E1E] font-bold uppercase">
-                  {activeIntensity === 'subtle' ? 'Nhẹ' : activeIntensity === 'medium' ? 'Vừa' : 'Rõ'}
-                </span>
-              </button>
-            )}
-
+          <div className="flex items-center gap-1.5 shrink-0 ml-2">
             {/* Texture Inspector Info toggle */}
             <button
               onClick={() => setShowTextureInspector(!showTextureInspector)}
-              className={`p-1 rounded-md transition-colors cursor-pointer ${
-                showTextureInspector ? 'bg-[#8B1E1E]/10 text-[#8B1E1E]' : 'hover:text-[#1E1D1B]'
+              className={`p-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1 ${
+                showTextureInspector
+                  ? 'bg-[#8B1E1E] text-white border-[#8B1E1E]'
+                  : 'bg-white/90 text-[#6B6152] border-[#E5DDD0] hover:text-[#1E1D1B] hover:bg-white'
               }`}
               title="Thông tin xúc giác chất liệu"
             >
               <Info size={13} />
             </button>
 
-            <span className="text-[#D3C7B5]">|</span>
-
-            {/* Zoom toggle */}
+            {/* Minimalist Zoom Toggle */}
             <button
               onClick={() => setZoomLevel(zoomLevel === 'full' ? 'torso' : 'full')}
-              className="p-1 hover:text-[#1E1D1B] transition-colors cursor-pointer flex items-center gap-1"
-              title={zoomLevel === 'full' ? 'Phóng to thân trên' : 'Xem toàn cảnh'}
+              className="p-1.5 bg-white/90 hover:bg-white border border-[#E5DDD0] text-[#554E43] hover:text-[#8B1E1E] rounded-lg transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
+              title={zoomLevel === 'full' ? 'Phóng to cận cảnh' : 'Xem toàn cảnh'}
             >
               {zoomLevel === 'full' ? <ZoomIn size={13} /> : <ZoomOut size={13} />}
-              <span className="text-[10px] uppercase font-semibold">
-                {zoomLevel === 'full' ? 'Toàn cảnh' : 'Cận cảnh'}
+              <span className="text-[10px] font-semibold hidden sm:inline">
+                {zoomLevel === 'full' ? 'Cận cảnh' : 'Toàn cảnh'}
               </span>
             </button>
           </div>
         )}
       </div>
 
+      {/* Quick Interactive Styling Bar: Chỉnh Giới Tính & Kiểu Sơ Vin */}
+      {interactive && !compact && (
+        <div className="w-full z-20 mt-2 flex flex-wrap items-center justify-between gap-1.5 text-xs animate-in fade-in duration-200">
+          {/* Gender Selector */}
+          <div className="flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-xl border border-[#E5DDD0] shadow-2xs">
+            <span className="text-[10px] font-bold text-[#7A7061] px-1 uppercase tracking-wider">
+              Dáng:
+            </span>
+            {[
+              { id: 'female', label: 'Nữ', icon: '👩' },
+              { id: 'male', label: 'Nam', icon: '👨' },
+              { id: 'androgynous', label: 'Unisex', icon: '✦' }
+            ].map((g) => {
+              const isSelected = activeGender === g.id;
+              return (
+                <button
+                  key={g.id}
+                  onClick={() => onGenderChange?.(g.id as GenderType)}
+                  className={`px-2 py-0.5 text-[10px] font-semibold rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                    isSelected
+                      ? 'bg-[#8B1E1E] text-white shadow-2xs'
+                      : 'text-[#695F50] hover:text-[#1E1D1B] hover:bg-[#F4EFEA]'
+                  }`}
+                  title={`Đổi phom dáng người mẫu: ${g.label}`}
+                >
+                  <span>{g.icon}</span>
+                  <span>{g.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Sơ vin (Tuck Style) Selector */}
+          <div className="flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-xl border border-[#E5DDD0] shadow-2xs">
+            <span className="text-[10px] font-bold text-[#7A7061] px-1 uppercase tracking-wider flex items-center gap-1">
+              <Scissors size={10} className="text-[#8B1E1E]" />
+              Sơ vin:
+            </span>
+            {[
+              { id: 'untucked', label: 'Thả tà', icon: '👔' },
+              { id: 'full-tuck', label: 'Đóng thùng', icon: '✨' },
+              { id: 'half-tuck', label: 'Vạt trước', icon: '⚡' }
+            ].map((t) => {
+              const isSelected = activeTuck === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => onTuckStyleChange?.(t.id as TuckStyleType)}
+                  className={`px-2 py-0.5 text-[10px] font-semibold rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                    isSelected
+                      ? 'bg-[#8B1E1E] text-white shadow-2xs'
+                      : 'text-[#695F50] hover:text-[#1E1D1B] hover:bg-[#F4EFEA]'
+                  }`}
+                  title={`Kiểu sơ vin: ${t.label}`}
+                >
+                  <span>{t.icon}</span>
+                  <span>{t.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Tactile Texture Inspector Toast / Overlay info */}
       {showTextureInspector && interactive && (
-        <div className="w-full z-20 mt-1.5 p-2.5 bg-white/95 backdrop-blur-md border border-[#E5DDD0] rounded-xl shadow-xs text-left">
+        <div className="w-full z-20 mt-1.5 p-2.5 bg-white/95 backdrop-blur-md border border-[#E5DDD0] rounded-xl shadow-xs text-left animate-in fade-in slide-in-from-top-1 duration-200">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#8B1E1E]">
               <span>{activeTextureMeta.icon}</span>
               <span className="font-editorial">{activeTextureMeta.origin}</span>
             </div>
             <span className="text-[10px] font-mono text-[#7A7061] uppercase tracking-wider">
-              Tactile Fabric Overlay
+              Xúc Giác Thủ Công
             </span>
           </div>
           <p className="text-[11px] text-[#554E41] leading-relaxed">
@@ -251,13 +301,13 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
 
       {/* Main Fashion Illustration & Cel-shaded Model */}
       <div
-        className={`relative flex items-center justify-center w-full my-auto transition-transform duration-500 ease-out ${
+        className={`relative flex items-center justify-center w-full my-auto transition-transform duration-500 ease-out py-1 ${
           zoomLevel === 'torso' ? 'scale-135 translate-y-16' : 'scale-100'
         }`}
       >
         <svg
           viewBox="0 0 400 640"
-          className="w-full max-h-[470px] select-none"
+          className="w-full max-h-[440px] sm:max-h-[460px] select-none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
@@ -275,19 +325,18 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
               <stop offset="100%" stopColor="#1E1D1B" stopOpacity="0" />
             </radialGradient>
 
-            {/* 3. Silk Sheen with rich highlights & multi-tone gradients */}
+            {/* 3. Silk Sheen with natural soft tonal depth (No harsh metallic white) */}
             <linearGradient id="silkSheen" x1="15%" y1="0%" x2="85%" y2="100%">
               <stop offset="0%" stopColor={primaryColor} />
-              <stop offset="30%" stopColor={primaryColor} />
-              <stop offset="52%" stopColor="#FFFFFF" stopOpacity="0.38" />
-              <stop offset="70%" stopColor={primaryColor} />
+              <stop offset="50%" stopColor={primaryColor} />
+              <stop offset="85%" stopColor={secondaryColor} />
               <stop offset="100%" stopColor={secondaryColor} />
             </linearGradient>
 
-            {/* Silk Specular Draping highlight strip */}
+            {/* Subtle Fabric Soft Light Overlay */}
             <linearGradient id="drapeSpecular" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0" />
-              <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.28" />
+              <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.12" />
               <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
             </linearGradient>
 
@@ -345,21 +394,52 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
               <stop offset="100%" stopColor="#6C7584" />
             </linearGradient>
 
-            {/* 9. 3D Drop Shadow on layers */}
-            <filter id="garmentDepth" x="-15%" y="-10%" width="130%" height="125%">
-              <feDropShadow dx="0" dy="5" stdDeviation="4.5" floodColor="#181512" floodOpacity="0.25" />
+            {/* 9. High-Fidelity Drop Shadow Filters for Layer Depth */}
+            <filter id="garmentDepth" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#181512" floodOpacity="0.22" />
             </filter>
-            <filter id="upperLayerDepth" x="-15%" y="-10%" width="130%" height="125%">
-              <feDropShadow dx="0" dy="3.5" stdDeviation="3" floodColor="#181512" floodOpacity="0.3" />
+            <filter id="upperLayerDepth" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="3" stdDeviation="2.8" floodColor="#181512" floodOpacity="0.28" />
             </filter>
-            <filter id="accessoryGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#000000" floodOpacity="0.2" />
+            <filter id="accessoryCastShadow" x="-25%" y="-25%" width="150%" height="150%">
+              <feDropShadow dx="0" dy="2.5" stdDeviation="2" floodColor="#14110E" floodOpacity="0.32" />
+            </filter>
+            <filter id="bagCastShadow" x="-25%" y="-25%" width="150%" height="150%">
+              <feDropShadow dx="1" dy="4" stdDeviation="3.5" floodColor="#14110E" floodOpacity="0.3" />
             </filter>
 
             {/* 10. Custom Avatar Photo Cameo Clip */}
             <clipPath id="customFaceCameo">
               <circle cx="200" cy="68" r="30" />
             </clipPath>
+
+            {/* 11. Tuck-in (Sơ vin) Silhouette Clip Paths */}
+            {/* Full Tuck: neatly cuts tunic hem at waistline y=292 with natural blousing curve */}
+            <clipPath id="tuckFullClip">
+              <path d="M0 0 L400 0 L400 292 Q300 297 200 293 Q100 297 0 292 Z" />
+            </clipPath>
+
+            {/* Half Tuck / French Tuck: clips front center flap into waistband, leaves sides & back flowing */}
+            <clipPath id="tuckHalfClip">
+              <path d="M0 0 L400 0 L400 640 L220 640 L220 292 Q200 296 180 292 L180 640 L0 640 Z" />
+            </clipPath>
+
+            {/* 12. Wear Transition Micro-Interactions Keyframe */}
+            <style>{`
+              @keyframes itemWearTransition {
+                0% {
+                  opacity: 0.35;
+                  transform: translateY(4px);
+                }
+                100% {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+              .mannequin-layer-transition {
+                animation: itemWearTransition 220ms cubic-bezier(0.16, 1, 0.3, 1);
+              }
+            `}</style>
           </defs>
 
           {/* BACKGROUND LIGHTING SPOTLIGHT (Center Stage Atmosphere) */}
@@ -373,111 +453,175 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
 
           {/* =========================================================
               LAYER 1: BASE MODEL CROQUIS (Haute Couture Fashion Anatomy)
+              - Shortened neck (15% reduction) with natural taper
+              - Relaxed natural feminine shoulder slope (8-10 degrees)
+              - Articulated elbows with subtle 6-degree bend
+              - 100% unified skinBase and skinShadow
              ========================================================= */}
           <g id="model-croquis">
-            {/* Neck & Trapezius with soft Cel-shading */}
-            <path d="M188 95 L188 142 L212 142 L212 95 Z" fill="#E8D5C4" />
-            {/* Neck Shadow under chin */}
-            <path d="M188 95 Q200 108 212 95 L212 108 Q200 118 188 108 Z" fill="#D3BEAC" opacity="0.75" />
-            {/* Collarbone / Xương quai xanh */}
-            <path d="M180 138 Q195 144 200 144 Q205 144 220 138" stroke="#CAAE9B" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-
-            {/* Stylized Sculpted Face Silhouette or Uploaded Custom Photo */}
-            {selection.customPhotoUrl ? (
-              <g>
-                <circle cx="200" cy="68" r="30" fill="#EFE0D3" />
-                <image
-                  href={selection.customPhotoUrl}
-                  x="170"
-                  y="38"
-                  width="60"
-                  height="60"
-                  preserveAspectRatio="xMidYMid slice"
-                  clipPath="url(#customFaceCameo)"
-                />
-                <circle cx="200" cy="68" r="30.5" fill="none" stroke="#C89B3C" strokeWidth="1.5" />
-              </g>
+            {/* Neck & Trapezius: Natural length and organic taper */}
+            {isMale ? (
+              <path d="M188 102 L184 140 L216 140 L212 102 Z" fill={skinBase} />
             ) : (
-              <g>
-                <path
-                  d="M176 68 C176 44 186 34 200 34 C214 34 224 44 224 68 C224 92 214 104 200 104 C186 104 176 92 176 68 Z"
-                  fill="#EFE0D3"
-                />
-                {/* Facial Shadow & Jaw Contour */}
-                <path d="M178 70 C178 88 188 98 200 102 C196 95 194 85 194 70 Z" fill="#E2CFBF" opacity="0.5" />
-                {/* Editorial Minimalist Features */}
-                <path d="M198 72 L201 72 L199 82 Z" fill="#C0A493" opacity="0.7" />
-                <path d="M195 90 Q200 93 205 90" stroke="#9C5D66" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-                {/* Eyebrows */}
-                <path d="M187 62 Q193 60 197 63" stroke="#4A3D36" strokeWidth="1.1" fill="none" strokeLinecap="round" />
-                <path d="M203 63 Q207 60 213 62" stroke="#4A3D36" strokeWidth="1.1" fill="none" strokeLinecap="round" />
-
-                {/* Avatar Archetype Hairstyle Details */}
-                {selection.avatarId === 'avatar-male-scholar' ? (
-                  /* Male Scholar Hair (Short parted modern hair) */
-                  <g>
-                    <path
-                      d="M174 58 C174 30 186 26 202 26 C218 26 226 34 226 56 C226 62 224 64 222 66 C220 52 216 42 202 42 C190 42 180 50 176 66 Z"
-                      fill="#1E1C1A"
-                    />
-                    <path d="M178 48 C185 36 195 35 204 42" stroke="#333" strokeWidth="1" fill="none" />
-                  </g>
-                ) : selection.avatarId === 'avatar-female-genz' ? (
-                  /* Female Gen Z Chic Bob with Bangs */
-                  <g>
-                    <path
-                      d="M172 65 C172 32 184 28 200 28 C216 28 228 32 228 65 C228 85 224 94 220 95 C222 75 220 54 212 52 C204 50 196 50 188 52 C180 54 178 75 180 95 C176 94 172 85 172 65 Z"
-                      fill="#1C1816"
-                    />
-                    <path d="M186 52 Q200 55 214 52" fill="#1C1816" />
-                  </g>
-                ) : selection.avatarId === 'avatar-androgynous' ? (
-                  /* High Fashion Editorial Slicked Back */
-                  <g>
-                    <path
-                      d="M176 56 C176 30 188 28 200 28 C212 28 224 30 224 56 C224 62 220 62 218 48 C212 38 188 38 182 48 C180 62 176 62 176 56 Z"
-                      fill="#262220"
-                    />
-                  </g>
-                ) : (
-                  /* Classic Heritage Chignon Bun (Default) */
-                  <g>
-                    <circle cx="200" cy="28" r="14" fill="#1E1C1A" />
-                    <path
-                      d="M175 62 C175 35 185 32 200 32 C215 32 225 35 225 62 C222 48 214 42 200 42 C186 42 178 48 175 62 Z"
-                      fill="#1E1C1A"
-                    />
-                    {/* Golden hair hairpin accent */}
-                    <line x1="190" y1="24" x2="216" y2="34" stroke="#C89B3C" strokeWidth="1.5" strokeLinecap="round" />
-                  </g>
-                )}
-              </g>
+              <path d="M190 102 L188 140 L212 140 L210 102 Z" fill={skinBase} />
+            )}
+            {/* Neck Shadow under chin */}
+            <path d="M190 102 Q200 112 210 102 L211 112 Q200 120 189 112 Z" fill={skinShadow} opacity="0.8" />
+            {/* Collarbone / Xương quai xanh */}
+            {isMale ? (
+              <path d="M176 136 Q195 144 200 144 Q205 144 224 136" stroke={skinShadow} strokeWidth="1.4" fill="none" strokeLinecap="round" />
+            ) : (
+              <path d="M182 136 Q195 142 200 142 Q205 142 218 136" stroke={skinShadow} strokeWidth="1.2" fill="none" strokeLinecap="round" />
             )}
 
-            {/* Arms / Hands (Fashion Pose, articulated fingers) */}
-            {/* Left Arm & Hand */}
-            <path d="M142 148 L124 240 L131 340 L138 340 L136 242 L150 152 Z" fill="#E8D5C4" />
-            <path d="M125 240 L131 340 L134 340 L129 242 Z" fill="#D3BEAC" opacity="0.6" />
-            {/* Articulated Left Hand */}
-            <path d="M131 340 C130 346 128 354 130 357 C132 359 135 358 136 352 L138 340 Z" fill="#E8D5C4" />
+            {/* Stylized Sculpted Face Silhouette according to selected Archetype */}
+            <g id="avatar-face-head">
+              {/* Head Silhouette Base */}
+              <path
+                d="M176 68 C176 44 186 34 200 34 C214 34 224 44 224 68 C224 92 214 104 200 104 C186 104 176 92 176 68 Z"
+                fill={skinBase}
+              />
+              {/* Facial Shadow & Jawline Contour */}
+              <path d="M178 70 C178 88 188 98 200 102 C196 95 194 85 194 70 Z" fill={skinShadow} opacity="0.55" />
+              {/* Nose Contour */}
+              <path d="M198 72 L201 72 L199 82 Z" fill={skinShadow} opacity="0.85" />
+              
+              {/* Soft Cheeks Blush */}
+              <ellipse cx="186" cy="80" rx="4.5" ry="2.5" fill={blushColor} opacity="0.35" />
+              <ellipse cx="214" cy="80" rx="4.5" ry="2.5" fill={blushColor} opacity="0.35" />
 
-            {/* Right Arm & Hand */}
-            <path d="M258 148 L274 235 L267 335 L260 335 L265 238 L250 152 Z" fill="#E8D5C4" />
-            <path d="M272 235 L267 335 L264 335 L269 238 Z" fill="#D3BEAC" opacity="0.6" />
-            {/* Articulated Right Hand */}
-            <path d="M267 335 C269 342 271 350 269 354 C267 356 264 355 262 348 L260 335 Z" fill="#E8D5C4" />
+              {/* Lips */}
+              <path d="M195 90 Q200 93 205 90" stroke={lipColor} strokeWidth="1.6" fill="none" strokeLinecap="round" />
 
-            {/* Legs with muscle shading */}
-            <path d="M174 420 L171 582 L189 582 L194 420 Z" fill="#DFC9B6" />
-            <path d="M172 480 L171 582 L176 582 L178 480 Z" fill="#CAAFA0" opacity="0.5" />
-            <path d="M206 420 L211 582 L229 582 L226 420 Z" fill="#DFC9B6" />
-            <path d="M224 480 L228 582 L229 582 L227 480 Z" fill="#CAAFA0" opacity="0.5" />
+              {/* Eyebrows */}
+              <path d="M186 62 Q192 60 197 63" stroke="#2B2421" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+              <path d="M203 63 Q208 60 214 62" stroke="#2B2421" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+
+              {/* Delicate Eyes & Eyelids */}
+              <ellipse cx="191" cy="69" rx="2.5" ry="1.2" fill="#201C1A" />
+              <ellipse cx="209" cy="69" rx="2.5" ry="1.2" fill="#201C1A" />
+
+              {/* -------------------------------------------------------------
+                  ARCHETYPE-SPECIFIC HAIRSTYLES & SIGNATURE ORNAMENTS
+                 ------------------------------------------------------------- */}
+              {activeAvatar.faceStyle === 'male-sharp' ? (
+                /* Thư Sinh Nho Nhã: Sleek 7/3 side-part hair */
+                <g id="hair-male-scholar">
+                  <path
+                    d="M174 58 C174 30 186 25 202 25 C218 25 226 34 226 56 C226 62 224 64 222 66 C220 52 216 40 202 40 C190 40 180 48 176 66 Z"
+                    fill="#1C1816"
+                  />
+                  <path d="M178 46 C186 35 196 34 204 40" stroke="#38302B" strokeWidth="1.2" fill="none" />
+                  {/* Sideburns */}
+                  <path d="M176 56 L175 66 L177 64 Z" fill="#1C1816" />
+                  <path d="M224 56 L225 66 L223 64 Z" fill="#1C1816" />
+                </g>
+              ) : activeAvatar.faceStyle === 'male-dandy' ? (
+                /* Công Tử Phố Cổ: Textured wavy hair with modern flair & stud */
+                <g id="hair-male-dandy">
+                  <path
+                    d="M173 58 C172 32 182 24 200 24 C218 24 227 32 227 58 C227 64 223 66 220 56 C216 42 208 38 200 38 C192 38 184 42 180 56 C177 66 173 64 173 58 Z"
+                    fill="#1F1B18"
+                  />
+                  {/* Wavy locks on top */}
+                  <path d="M182 28 Q190 22 200 27 Q210 22 218 28" fill="none" stroke="#3A322C" strokeWidth="2.5" strokeLinecap="round" />
+                  <path d="M188 34 Q196 30 204 35" fill="none" stroke="#3A322C" strokeWidth="1.8" strokeLinecap="round" />
+                  {/* Gold Stud Earring */}
+                  <circle cx="174" cy="74" r="1.5" fill="#D4AF37" />
+                </g>
+              ) : activeAvatar.faceStyle === 'female-modern' ? (
+                /* Hà Thành Gen Z: Chic layered bob with airy bangs & ear cuff */
+                <g id="hair-female-genz">
+                  <path
+                    d="M171 65 C171 30 184 26 200 26 C216 26 229 30 229 65 C229 86 224 94 220 95 C222 75 220 52 212 50 C204 48 196 48 188 50 C180 52 178 75 180 95 C176 94 171 86 171 65 Z"
+                    fill="#1A1715"
+                  />
+                  {/* Airy see-through bangs */}
+                  <path d="M186 50 Q200 54 214 50" fill="#1A1715" />
+                  <path d="M192 50 L193 57 M200 50 L200 58 M208 50 L207 57" stroke="#2B2420" strokeWidth="1.2" strokeLinecap="round" />
+                  {/* Double Gold Ear Cuff */}
+                  <line x1="225" y1="67" x2="227" y2="67" stroke="#E6C875" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="225" y1="71" x2="227" y2="71" stroke="#E6C875" strokeWidth="1.5" strokeLinecap="round" />
+                </g>
+              ) : activeAvatar.faceStyle === 'female-poet' ? (
+                /* Nàng Thơ Xứ Huế: Cascading long side hair with delicate lotus barrette */
+                <g id="hair-female-poet">
+                  {/* Main Hair Silhouette */}
+                  <path
+                    d="M174 62 C174 34 185 28 200 28 C215 28 226 34 226 62 C223 48 214 40 200 40 C186 40 177 48 174 62 Z"
+                    fill="#181513"
+                  />
+                  {/* Cascading locks flowing down left shoulder */}
+                  <path
+                    d="M174 62 C170 78 168 110 166 148 C165 156 168 158 171 154 C174 135 178 95 180 72 Z"
+                    fill="#181513"
+                  />
+                  {/* Lotus Hair Barrette */}
+                  <circle cx="218" cy="46" r="3.5" fill="#E87A90" />
+                  <circle cx="218" cy="46" r="1.5" fill="#FFF2B8" />
+                </g>
+              ) : activeAvatar.faceStyle === 'editorial' ? (
+                /* Haute Couture Runway: Slicked-back high fashion runway finish */
+                <g id="hair-editorial">
+                  <path
+                    d="M176 56 C176 28 188 26 200 26 C212 28 224 28 224 56 C224 62 220 62 218 46 C212 36 188 36 182 46 C180 62 176 62 176 56 Z"
+                    fill="#221E1B"
+                  />
+                  {/* Slicked sheen lines */}
+                  <path d="M186 34 Q200 30 214 34" stroke="#423933" strokeWidth="1.2" fill="none" />
+                  <path d="M188 40 Q200 36 212 40" stroke="#423933" strokeWidth="1" fill="none" />
+                </g>
+              ) : (
+                /* Tố Nữ Đài Các (Default): Royal Chignon Bun with Jade & Gold Hairpin */
+                <g id="hair-female-classic">
+                  <circle cx="200" cy="26" r="14" fill="#1C1816" />
+                  <path
+                    d="M175 62 C175 34 185 30 200 30 C215 30 225 34 225 62 C222 46 214 40 200 40 C186 40 178 46 175 62 Z"
+                    fill="#1C1816"
+                  />
+                  {/* Golden Jade Hairpin */}
+                  <line x1="188" y1="22" x2="218" y2="32" stroke="#D4AF37" strokeWidth="1.8" strokeLinecap="round" />
+                  <circle cx="218" cy="32" r="2.8" fill="#2E7D32" stroke="#D4AF37" strokeWidth="0.6" />
+                </g>
+              )}
+            </g>
+
+            {/* Sloping Shoulders & Articulated Natural Arms */}
+            {isMale ? (
+              <>
+                {/* Male Athletic Broader Shoulders & Arms */}
+                <path d="M134 150 L120 238 L128 340 L135 340 L129 238 L144 152 Z" fill={skinBase} />
+                <path d="M121 238 L128 340 L131 340 L125 238 Z" fill={skinShadow} opacity="0.6" />
+                <path d="M128 340 C126 346 124 354 127 357 C129 359 133 358 134 352 L135 340 Z" fill={skinBase} />
+
+                <path d="M266 150 L280 238 L272 340 L265 340 L271 238 L256 152 Z" fill={skinBase} />
+                <path d="M279 238 L272 340 L269 340 L275 238 Z" fill={skinShadow} opacity="0.6" />
+                <path d="M272 340 C274 346 276 354 273 357 C271 359 267 358 266 352 L265 340 Z" fill={skinBase} />
+              </>
+            ) : (
+              <>
+                {/* Female / Neutral Graceful Arms */}
+                <path d="M140 154 L126 238 L132 340 L138 340 L134 238 L148 156 Z" fill={skinBase} />
+                <path d="M127 238 L132 340 L134 340 L130 238 Z" fill={skinShadow} opacity="0.6" />
+                <path d="M132 340 C130 346 128 354 131 357 C133 359 136 358 137 352 L138 340 Z" fill={skinBase} />
+
+                <path d="M260 154 L274 238 L268 340 L262 340 L266 238 L252 156 Z" fill={skinBase} />
+                <path d="M271 238 L268 340 L265 340 L268 238 Z" fill={skinShadow} opacity="0.6" />
+                <path d="M268 340 C270 346 272 354 269 357 C267 359 264 358 263 352 L262 340 Z" fill={skinBase} />
+              </>
+            )}
+
+            {/* Legs with accurate skin tone and soft muscle contouring */}
+            <path d="M174 420 L171 582 L189 582 L194 420 Z" fill={skinBase} />
+            <path d="M172 480 L171 582 L176 582 L178 480 Z" fill={skinShadow} opacity="0.5" />
+            <path d="M206 420 L211 582 L229 582 L226 420 Z" fill={skinBase} />
+            <path d="M224 480 L228 582 L229 582 L227 480 Z" fill={skinShadow} opacity="0.5" />
           </g>
 
           {/* =========================================================
               LAYER 2: BOTTOM PIECES (Volumetric Drapery & Texture)
              ========================================================= */}
-          <g id="bottom-layer">
+          <g id="bottom-layer" key={`bottom-${bottom.id}`} className="mannequin-layer-transition">
             {bottom.id === 'pants-silk-wide' && (
               /* Quần Lụa Ống Rộng Di Sản (Rich Drapery Folds) */
               <g>
@@ -612,12 +756,40 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
                 <path d="M166 282 L215 525 L234 282 Z" fill="#2E2C2A" opacity="0.4" />
               </g>
             )}
+
+            {bottom.id === 'shorts-denim-mini' && (
+              /* Quần Shorts Jeans Siêu Ngắn */
+              <g>
+                <path
+                  d="M166 288 L150 375 L195 375 L200 335 L205 375 L250 375 L234 288 Z"
+                  fill="#2A4365"
+                  stroke="#1A2D45"
+                  strokeWidth="1.5"
+                />
+                <path d="M200 295 L200 335" stroke="#E5A138" strokeWidth="1.2" strokeDasharray="3,2" />
+                {/* Frayed hemline */}
+                <path d="M150 375 L195 375" stroke="#90CDF4" strokeWidth="1.8" strokeDasharray="3,2" />
+                <path d="M205 375 L250 375" stroke="#90CDF4" strokeWidth="1.8" strokeDasharray="3,2" />
+              </g>
+            )}
           </g>
 
           {/* =========================================================
               LAYER 3: MAIN GARMENT (Brocade, Drapery & Depth Shading)
              ========================================================= */}
-          <g id="main-garment" filter="url(#garmentDepth)">
+          <g
+            id="main-garment"
+            key={`garment-${garment.id}-${selection.colorId}-${activeTuck}`}
+            className="mannequin-layer-transition"
+            filter="url(#garmentDepth)"
+            clipPath={
+              activeTuck === 'full-tuck'
+                ? 'url(#tuckFullClip)'
+                : activeTuck === 'half-tuck'
+                ? 'url(#tuckHalfClip)'
+                : undefined
+            }
+          >
             {garment.id === 'ao-ngu-than' && (
               /* ÁO NGŨ THÂN (Mandarin collar, 5 panels, right side buttons, knee-length) */
               <g>
@@ -867,62 +1039,136 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
           </g>
 
           {/* =========================================================
-              LAYER 4: ACCESSORIES (Silver Collar, Headphones, Glasses...)
+              LAYER 3.5: TUCK-IN BLOUSE DRAPES & EXPOSED WAISTBAND DETAILS
+              - Renders blousing fabric gathers, shadow, and waistband / button
              ========================================================= */}
-          <g id="accessory-layer">
+          {activeTuck !== 'untucked' && (
+            <g id="tuck-waist-overlay" key={`tuck-overlay-${activeTuck}`} className="mannequin-layer-transition">
+              {activeTuck === 'full-tuck' ? (
+                /* Full Tuck (Sơ vin toàn phần / Đóng thùng) */
+                <g>
+                  {/* Bloused fabric gather shadow under roll */}
+                  <path d="M158 293 Q200 300 242 293" stroke="#000000" strokeWidth="3.8" opacity="0.32" fill="none" />
+                  {/* Bloused fold roll curve */}
+                  <path d="M156 290 Q180 295 200 292 Q220 295 244 290" stroke={secondaryColor} strokeWidth="2.4" fill="none" />
+                  <path d="M162 291 Q200 295 238 291" stroke="#FFFFFF" strokeWidth="1" opacity="0.4" fill="none" />
+
+                  {/* Exposed Bottom Waistband Details (Button, Belt Loops, Rivets) */}
+                  <g filter="url(#upperLayerDepth)">
+                    {/* Waistband contour line */}
+                    <path d="M164 286 L236 286 L234 298 L166 298 Z" fill="#1C1A18" opacity="0.75" />
+                    {/* Metallic waist button */}
+                    <circle cx="200" cy="292" r="2.8" fill="url(#silverGradient)" stroke="#22201E" strokeWidth="0.8" />
+                    {/* Center fly stitch */}
+                    <line x1="200" y1="295" x2="200" y2="330" stroke="#1A1816" strokeWidth="1.2" strokeDasharray="3,2" />
+                    {/* Belt loops */}
+                    <rect x="178" y="286" width="3.5" height="12" rx="1" fill="#3D3A37" stroke="#1A1816" strokeWidth="0.6" />
+                    <rect x="218" y="286" width="3.5" height="12" rx="1" fill="#3D3A37" stroke="#1A1816" strokeWidth="0.6" />
+                  </g>
+                </g>
+              ) : (
+                /* Half Tuck / French Tuck (Sơ vin vạt trước) */
+                <g>
+                  {/* Center front gather crease & shadow */}
+                  <path d="M182 292 Q200 298 218 292" stroke="#000000" strokeWidth="3.5" opacity="0.32" fill="none" />
+                  {/* Center front bloused fabric tuck roll */}
+                  <path d="M180 290 Q200 295 220 290" stroke={secondaryColor} strokeWidth="2.4" fill="none" />
+                  <path d="M184 291 Q200 294 216 291" stroke="#FFFFFF" strokeWidth="0.8" opacity="0.4" fill="none" />
+
+                  {/* Exposed Center Belt Buckle / Button Detail */}
+                  <g filter="url(#upperLayerDepth)">
+                    <circle cx="200" cy="292" r="2.6" fill="url(#silverGradient)" stroke="#22201E" strokeWidth="0.8" />
+                    <line x1="200" y1="295" x2="200" y2="320" stroke="#1A1816" strokeWidth="1" strokeDasharray="2,2" />
+                  </g>
+                </g>
+              )}
+            </g>
+          )}
+
+          {/* =========================================================
+              LAYER 4: ACCESSORIES (Silver Collar, Headphones, Glasses, Belt...)
+             ========================================================= */}
+          <g id="accessory-layer" key={`acc-${accessory.id}`} className="mannequin-layer-transition">
             {accessory.id === 'acc-silver-kieng' && (
-              /* Kiềng Bạc Chạm Trống Đồng quanh cổ (3D Silver Shimmer) */
-              <g filter="url(#upperLayerDepth)">
-                <ellipse cx="200" cy="148" rx="22" ry="10" fill="none" stroke="url(#silverGradient)" strokeWidth="4.5" />
-                <ellipse cx="200" cy="147.5" rx="22" ry="10" fill="none" stroke="#FFFFFF" strokeWidth="1" opacity="0.75" />
+              /* Kiềng Bạc Chạm Trống Đồng quanh cổ (3D Silver Shimmer with realistic neck curvature & cast shadow) */
+              <g filter="url(#accessoryCastShadow)">
+                {/* Back collar shadow cast onto chest */}
+                <ellipse cx="200" cy="147" rx="23" ry="10.5" fill="none" stroke="#12100E" strokeWidth="2" opacity="0.35" />
+                {/* Main Silver Ring */}
+                <ellipse cx="200" cy="145" rx="23" ry="10.5" fill="none" stroke="url(#silverGradient)" strokeWidth="4.5" />
+                {/* Engraved traditional Dong Son motifs */}
+                <ellipse cx="200" cy="145" rx="23" ry="10.5" fill="none" stroke="#5E6573" strokeWidth="0.8" strokeDasharray="2,2" />
+                {/* Specular Highlight */}
+                <ellipse cx="200" cy="144" rx="23" ry="10.5" fill="none" stroke="#FFFFFF" strokeWidth="1.2" opacity="0.85" />
+                {/* Central Medallion pendant */}
+                <circle cx="200" cy="155" r="3" fill="url(#silverGradient)" stroke="#FFFFFF" strokeWidth="0.5" />
               </g>
             )}
 
             {accessory.id === 'acc-headphones' && (
               /* Tai Nghe Over-Ear Gen Z Signature quanh cổ */
-              <g filter="url(#upperLayerDepth)">
+              <g filter="url(#accessoryCastShadow)">
                 <path
-                  d="M178 144 C178 165 222 165 222 144"
-                  stroke="#383A40"
-                  strokeWidth="5.5"
+                  d="M174 140 C174 168 226 168 226 140"
+                  stroke="#2B2D33"
+                  strokeWidth="5"
                   fill="none"
                   strokeLinecap="round"
                 />
-                <rect x="170" y="136" width="13" height="20" rx="4" fill="#C2C6CE" stroke="#222" strokeWidth="1.2" />
-                <rect x="217" y="136" width="13" height="20" rx="4" fill="#C2C6CE" stroke="#222" strokeWidth="1.2" />
-                <circle cx="176.5" cy="146" r="3" fill="#8E939E" />
-                <circle cx="223.5" cy="146" r="3" fill="#8E939E" />
+                <rect x="166" y="132" width="14" height="22" rx="4.5" fill="#C2C6CE" stroke="#222" strokeWidth="1.2" />
+                <rect x="220" y="132" width="14" height="22" rx="4.5" fill="#C2C6CE" stroke="#222" strokeWidth="1.2" />
+                <circle cx="173" cy="143" r="3.2" fill="#8E939E" />
+                <circle cx="227" cy="143" r="3.2" fill="#8E939E" />
               </g>
             )}
 
             {accessory.id === 'acc-sunglasses-oval' && (
-              /* Kính Râm Oval Y2K trên khuôn mặt */
+              /* Kính Mát Oval Y2K - Futuristic Designer Eyewear with Specular Highlight */
               <g filter="url(#upperLayerDepth)">
-                <ellipse cx="193" cy="72" rx="7.5" ry="5" fill="#141416" stroke="#C89B3C" strokeWidth="1" />
-                <ellipse cx="207" cy="72" rx="7.5" ry="5" fill="#141416" stroke="#C89B3C" strokeWidth="1" />
-                <line x1="200" y1="72" x2="200" y2="72" stroke="#C89B3C" strokeWidth="1.2" />
-                {/* Glass reflection streak */}
-                <line x1="191" y1="70" x2="195" y2="74" stroke="#FFF" strokeWidth="0.8" opacity="0.6" />
-                <line x1="205" y1="70" x2="209" y2="74" stroke="#FFF" strokeWidth="0.8" opacity="0.6" />
+                {/* Metallic Gold/Silver Sleek Frame */}
+                <ellipse cx="191" cy="71" rx="8.5" ry="4.8" fill="#18191C" stroke="#D4AF37" strokeWidth="1.2" />
+                <ellipse cx="209" cy="71" rx="8.5" ry="4.8" fill="#18191C" stroke="#D4AF37" strokeWidth="1.2" />
+                {/* Nose Bridge and Outer Temple Pins */}
+                <path d="M199.5 70.5 Q200 69.5 200.5 70.5" stroke="#D4AF37" strokeWidth="1.3" fill="none" />
+                <circle cx="182" cy="71" r="1.1" fill="#E6C875" />
+                <circle cx="218" cy="71" r="1.1" fill="#E6C875" />
+                {/* 45-Degree Crisp Glass Specular Reflex Highlights */}
+                <path d="M187 68 L194 74" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" opacity="0.85" />
+                <path d="M185 71 L189 74" stroke="#FFFFFF" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+                <path d="M205 68 L212 74" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" opacity="0.85" />
+                <path d="M203 71 L207 74" stroke="#FFFFFF" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
               </g>
             )}
 
             {accessory.id === 'acc-wooden-fan' && (
               /* Quạt Gỗ Trầm Hương trên tay phải */
-              <g transform="translate(252, 312) rotate(16)" filter="url(#upperLayerDepth)">
+              <g transform="translate(264, 335) rotate(16)" filter="url(#accessoryCastShadow)">
                 <path d="M0 0 L-22 -38 A44 44 0 0 1 22 -38 Z" fill="#85532F" stroke="#523015" strokeWidth="1" />
                 <line x1="0" y1="0" x2="-11" y2="-37" stroke="#D8B589" strokeWidth="0.8" />
                 <line x1="0" y1="0" x2="0" y2="-39" stroke="#D8B589" strokeWidth="0.8" />
                 <line x1="0" y1="0" x2="11" y2="-37" stroke="#D8B589" strokeWidth="0.8" />
                 <circle cx="0" cy="0" r="3.2" fill="#D93D57" />
+                {/* Silk tassel */}
+                <path d="M0 3 L-1 15 L2 15 Z" fill="#D93D57" />
               </g>
             )}
 
             {accessory.id === 'acc-jade-earrings' && (
               /* Khuyên Tai Ngọc Bích Bọc Vàng */
               <g filter="url(#upperLayerDepth)">
-                <circle cx="178" cy="84" r="2.8" fill="#1E382B" stroke="#E6C875" strokeWidth="1" />
-                <circle cx="222" cy="84" r="2.8" fill="#1E382B" stroke="#E6C875" strokeWidth="1" />
+                <circle cx="176" cy="84" r="2.8" fill="#1E382B" stroke="#E6C875" strokeWidth="1" />
+                <circle cx="224" cy="84" r="2.8" fill="#1E382B" stroke="#E6C875" strokeWidth="1" />
+              </g>
+            )}
+
+            {accessory.id === 'acc-silk-belt' && (
+              /* Thắt Lưng Lụa Thổ Cẩm Dệt Tay Quanh Eo */
+              <g filter="url(#accessoryCastShadow)">
+                <rect x="160" y="280" width="80" height="12" rx="2" fill="#9C2738" stroke="#D4AF37" strokeWidth="1" />
+                <line x1="160" y1="286" x2="240" y2="286" stroke="#D4AF37" strokeWidth="1" strokeDasharray="3,2" />
+                {/* Hanging tassel knots on side */}
+                <path d="M172 292 L170 330 L176 330 L174 292 Z" fill="#D4AF37" opacity="0.9" />
+                <circle cx="173" cy="333" r="2" fill="#9C2738" />
               </g>
             )}
           </g>
@@ -930,7 +1176,7 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
           {/* =========================================================
               LAYER 5: HEADWEAR (Khăn đóng, Mấn, Khăn mỏ quạ, Beret...)
              ========================================================= */}
-          <g id="headwear-layer" filter="url(#upperLayerDepth)">
+          <g id="headwear-layer" key={`head-${headwear.id}`} className="mannequin-layer-transition" filter="url(#upperLayerDepth)">
             {headwear.id === 'head-khan-dong' && (
               /* Khăn Đóng / Khăn Xếp (Xếp nếp chữ Nhân 人 đa tầng) */
               <g>
@@ -1000,51 +1246,62 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
 
           {/* =========================================================
               LAYER 6: BAGS (Crossbody, Shoulder Bag, Giỏ mây, Tote...)
+              Anchored realistically to shoulders/hands with soft cast shadows
              ========================================================= */}
-          <g id="bag-layer" filter="url(#upperLayerDepth)">
+          <g id="bag-layer" key={`bag-${bag.id}`} className="mannequin-layer-transition" filter="url(#bagCastShadow)">
             {bag.id === 'bag-crossbody-nylon' && (
-              /* Túi Crossbody Nylon vắt chéo ngực */
+              /* Túi Crossbody Nylon vắt chéo qua ngực */
               <g>
-                <line x1="148" y1="154" x2="232" y2="292" stroke="#25272B" strokeWidth="4.5" />
-                <rect x="178" y="234" width="48" height="35" rx="6" fill="#1C1E22" stroke="#3D4047" strokeWidth="1.3" />
-                <line x1="184" y1="248" x2="220" y2="248" stroke="#8E939D" strokeWidth="1.2" />
+                <line x1="154" y1="152" x2="236" y2="294" stroke="#25272B" strokeWidth="4" strokeLinecap="round" />
+                <rect x="180" y="236" width="46" height="34" rx="6" fill="#1C1E22" stroke="#3D4047" strokeWidth="1.3" />
+                <line x1="186" y1="248" x2="220" y2="248" stroke="#8E939D" strokeWidth="1.2" />
+                <circle cx="218" cy="260" r="2" fill="#E53E3E" />
               </g>
             )}
 
             {bag.id === 'bag-shoulder-leather' && (
-              /* Túi Kẹp Nách Baguette Da Mềm bên sườn trái */
-              <g transform="translate(116, 218)">
-                <path d="M12 0 C12 -22 28 -22 28 0" stroke="#543420" strokeWidth="2.8" fill="none" />
-                <rect x="0" y="0" width="40" height="25" rx="5" fill="#362013" stroke="#211209" strokeWidth="1" />
-                <circle cx="20" cy="12" r="3.2" fill="url(#goldGradient)" />
+              /* Túi Kẹp Nách Baguette Da Mềm vắt qua vai trái ôm sát mạn sườn */
+              <g>
+                {/* Shoulder strap looping from left shoulder */}
+                <path d="M140 154 C130 174 126 194 125 210" stroke="#4A2E1C" strokeWidth="3" fill="none" strokeLinecap="round" />
+                {/* Bag body tucked under arm */}
+                <g transform="translate(110, 206)">
+                  <rect x="0" y="0" width="38" height="24" rx="5" fill="#362013" stroke="#211209" strokeWidth="1.2" />
+                  <circle cx="19" cy="12" r="3" fill="url(#goldGradient)" />
+                </g>
               </g>
             )}
 
             {bag.id === 'bag-woven-coi' && (
-              /* Túi Mây Tre Đan Thủ Công bên tay phải */
-              <g transform="translate(254, 328)">
-                <path d="M12 0 C12 -18 26 -18 26 0" stroke="#855F3B" strokeWidth="2.2" fill="none" />
-                <path d="M4 0 L34 0 L30 36 L8 36 Z" fill="#CF9F6A" stroke="#946535" strokeWidth="1" />
-                <line x1="8" y1="12" x2="30" y2="12" stroke="#946535" strokeWidth="0.9" strokeDasharray="3,2" />
-                <line x1="10" y1="24" x2="28" y2="24" stroke="#946535" strokeWidth="0.9" strokeDasharray="3,2" />
+              /* Túi Mây Tre Đan Thủ Công móc trực tiếp vào lòng bàn tay phải */
+              <g transform="translate(254, 340)">
+                {/* Woven handle anchored in palm */}
+                <path d="M12 0 C12 -16 24 -16 24 0" stroke="#855F3B" strokeWidth="2.5" fill="none" />
+                {/* Woven Basket body */}
+                <path d="M3 0 L33 0 L29 38 L7 38 Z" fill="#CF9F6A" stroke="#946535" strokeWidth="1" />
+                <line x1="7" y1="12" x2="29" y2="12" stroke="#946535" strokeWidth="0.9" strokeDasharray="3,2" />
+                <line x1="9" y1="25" x2="27" y2="25" stroke="#946535" strokeWidth="0.9" strokeDasharray="3,2" />
               </g>
             )}
 
             {bag.id === 'bag-tote-dongho' && (
-              /* Túi Tote Vải Đay In Mộc Đông Hồ */
-              <g transform="translate(114, 234)">
-                <path d="M15 0 C15 -32 32 -32 32 0" stroke="#857864" strokeWidth="2.8" fill="none" />
-                <rect x="4" y="0" width="42" height="50" rx="3" fill="#E6DDCF" stroke="#BEB29F" strokeWidth="1.2" />
-                <rect x="14" y="13" width="22" height="25" fill="#C4344B" opacity="0.85" rx="2" />
-                <circle cx="25" cy="25" r="5" fill="#E8A91C" />
+              /* Túi Tote Vải Đay móc vào lòng bàn tay trái */
+              <g transform="translate(114, 340)">
+                {/* Long tote strap anchored in hand */}
+                <path d="M16 0 C16 -22 28 -22 28 0" stroke="#857864" strokeWidth="2.5" fill="none" />
+                {/* Tote Bag canvas */}
+                <rect x="4" y="0" width="40" height="46" rx="3" fill="#E6DDCF" stroke="#BEB29F" strokeWidth="1.2" />
+                <rect x="13" y="10" width="22" height="25" fill="#C4344B" opacity="0.85" rx="2" />
+                <circle cx="24" cy="22" r="4.5" fill="#E8A91C" />
               </g>
             )}
 
             {bag.id === 'bag-clutch-lacquer' && (
-              /* Clutch Cầm Tay Dáng Quạt Sơn Mài */
-              <g transform="translate(124, 332) rotate(-10)">
+              /* Clutch Cầm Tay Dáng Quạt Sơn Mài kẹp gọn trên bàn tay trái */
+              <g transform="translate(120, 338) rotate(-6)">
                 <path d="M0 0 L36 0 C36 16 26 24 0 18 Z" fill="#141312" stroke="#C89B3C" strokeWidth="1.4" />
                 <line x1="6" y1="6" x2="28" y2="6" stroke="#C89B3C" strokeWidth="1.1" />
+                <circle cx="28" cy="8" r="1.8" fill="#C89B3C" />
               </g>
             )}
           </g>
@@ -1052,7 +1309,7 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
           {/* =========================================================
               LAYER 7: FOOTWEAR (Chunky Sneaker, Guốc mộc, Loafer...)
              ========================================================= */}
-          <g id="footwear-layer" filter="url(#upperLayerDepth)">
+          <g id="footwear-layer" key={`footwear-${footwear.id}`} className="mannequin-layer-transition" filter="url(#upperLayerDepth)">
             {footwear.id === 'shoes-chunky-sneaker' && (
               /* Chunky Sneaker Trắng Gen Z (Multi-layer rubber sole) */
               <g>
@@ -1103,16 +1360,75 @@ export const MannequinPreview: React.FC<MannequinPreviewProps> = ({
               </g>
             )}
 
-            {footwear.id === 'shoes-embroidered-flats' && (
-              /* Giày Vải Thêu Chỉ Kim Tuyến */
+            {(footwear.id === 'shoes-embroidered-flats' || footwear.id === 'shoes-hai-theu') && (
+              /* Giày Vải Thêu Chỉ Kim Tuyến / Hài Thêu Hoàng Cung */
               <g>
                 <path d="M167 582 C177 580 189 580 191 598 L165 598 Z" fill="#8B1E1E" stroke="#C89B3C" strokeWidth="0.9" />
                 <path d="M209 582 C219 580 231 580 233 598 L207 598 Z" fill="#8B1E1E" stroke="#C89B3C" strokeWidth="0.9" />
+                {/* Cloud & lotus embroidery detail */}
+                <path d="M174 589 Q179 586 184 589" stroke="#FFF2B8" strokeWidth="0.8" fill="none" />
+                <path d="M216 589 Q221 586 226 589" stroke="#FFF2B8" strokeWidth="0.8" fill="none" />
+              </g>
+            )}
+
+            {footwear.id === 'shoes-dep-le-flipflop' && (
+              /* Dép Lê Xỏ Ngón Xuề Xòa */
+              <g>
+                {/* Thin foam sole */}
+                <rect x="166" y="594" width="24" height="4" rx="2" fill="#3B82F6" stroke="#1D4ED8" strokeWidth="0.6" />
+                <rect x="210" y="594" width="24" height="4" rx="2" fill="#3B82F6" stroke="#1D4ED8" strokeWidth="0.6" />
+                {/* Plastic Y-straps */}
+                <path d="M172 594 L178 587 L184 594" stroke="#EF4444" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+                <path d="M216 594 L222 587 L228 594" stroke="#EF4444" strokeWidth="1.8" fill="none" strokeLinecap="round" />
               </g>
             )}
           </g>
         </svg>
       </div>
+
+      {/* Dedicated Tactile Fabric Control Bar (Bottom Bar - Clean & Non-overlapping) */}
+      {interactive && (
+        <div className="w-full z-20 my-1 px-2 py-1.5 bg-white/95 backdrop-blur-md rounded-xl border border-[#E5DDD0] shadow-xs flex flex-wrap items-center justify-between gap-1.5 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#7A7061] hidden sm:inline">
+              Chất liệu:
+            </span>
+            <div className="flex items-center p-0.5 bg-[#F4EFEA] rounded-lg">
+              {FABRIC_TEXTURE_OPTIONS.map((tex) => {
+                const isSelected = activeTexture === tex.id;
+                return (
+                  <button
+                    key={tex.id}
+                    onClick={() => handleTextureSelect(tex.id)}
+                    className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                      isSelected
+                        ? 'bg-[#8B1E1E] text-white shadow-2xs'
+                        : 'text-[#695F50] hover:text-[#1E1D1B]'
+                    }`}
+                    title={`${tex.label} — ${tex.description}`}
+                  >
+                    <span>{tex.icon}</span>
+                    <span>{tex.label.split(' ')[0]}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {activeTexture !== 'none' && (
+            <button
+              onClick={handleIntensityCycle}
+              className="px-2 py-1 text-[10px] font-semibold bg-[#F4EFEA] hover:bg-[#EAE2D5] text-[#554E43] rounded-md transition-colors cursor-pointer whitespace-nowrap"
+              title="Đổi độ phủ xúc giác: Nhẹ · Vừa · Rõ"
+            >
+              Độ phủ:{' '}
+              <span className="text-[#8B1E1E] font-bold uppercase">
+                {activeIntensity === 'subtle' ? 'Nhẹ' : activeIntensity === 'medium' ? 'Vừa' : 'Rõ'}
+              </span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Bottom Floating Piece Ticker */}
       <div className="w-full flex items-center justify-between z-20 pt-2 border-t border-[#E5DDD0]/70 text-[11px] text-[#6E6659]">

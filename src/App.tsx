@@ -23,6 +23,10 @@ const DEFAULT_SELECTION: OutfitSelection = {
   accessoryId: 'acc-headphones',
   styleId: 'style-street',
   colorId: 'lacquer-red',
+  gender: 'female',
+  tuckStyle: 'untucked',
+  avatarId: 'avatar-female-classic',
+  skinTone: 'porcelain',
   fabricTexture: 'silk',
   textureIntensity: 'medium'
 };

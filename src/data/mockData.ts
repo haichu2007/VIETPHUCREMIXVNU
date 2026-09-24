@@ -14,7 +14,10 @@ import {
   EventOption,
   OutfitSelection,
   CulturalIntegrityCheck,
-  ColorHarmonyReport
+  ColorHarmonyReport,
+  WhereToWearLocation,
+  SustainableItem,
+  SmartAIContext
 } from '../types';
 
 export const GARMENTS: Garment[] = [
@@ -194,6 +197,15 @@ export const BOTTOM_PIECES: BottomPiece[] = [
     styleTag: 'Creative Editorial',
     description: 'Cắt vạt chéo sắc sảo gợi liên tưởng đến tà áo dài cách tân, chất vải lanh thô dệt thủ công.',
     silhouetteSvg: 'skirt-asymmetric'
+  },
+  {
+    id: 'shorts-denim-mini',
+    name: 'Quần Shorts Denim Siêu Ngắn',
+    category: 'bottom',
+    isTraditional: false,
+    styleTag: 'Casual Summer',
+    description: 'Quần soóc jeans ngắn hiện đại mang tính năng động mùa hè nhưng cần thận trọng khi phối cùng cổ phục truyền thống.',
+    silhouetteSvg: 'shorts-denim'
   }
 ];
 
@@ -308,6 +320,15 @@ export const FOOTWEAR_PIECES: FootwearPiece[] = [
     styleTag: 'Royal Detail',
     description: 'Mũi hài cong nhẹ thêu hoa sen hoặc vân mây cung đình bằng chỉ tơ óng ánh.',
     silhouetteSvg: 'embroidered-shoes'
+  },
+  {
+    id: 'shoes-dep-le-flipflop',
+    name: 'Dép Lê Xỏ Ngón Xuề Xòa',
+    category: 'footwear',
+    isTraditional: false,
+    styleTag: 'Casual Beach',
+    description: 'Dép lê xốp hoặc quai kẹp xuề xòa dùng đi dạo biển hoặc sinh hoạt thường ngày, xung đột khi kết hợp cùng cổ phục nghi lễ.',
+    silhouetteSvg: 'flipflop'
   }
 ];
 
@@ -356,10 +377,28 @@ export const BAG_PIECES: BagPiece[] = [
     styleTag: 'Editorial Couture',
     description: 'Tạo hình dẻ quạt khảm ốc xà cừ hoặc phủ sơn mài đen bóng, món phụ kiện dạ tiệc xa hoa.',
     silhouetteSvg: 'clutch'
+  },
+  {
+    id: 'bag-none',
+    name: 'Không Mang Túi Xách',
+    category: 'bag',
+    isTraditional: false,
+    styleTag: 'Minimalist Clean',
+    description: 'Tối giản đôi tay buông nhẹ tự nhiên, giải phóng chuyển động cơ thể không vướng bận.',
+    silhouetteSvg: 'none'
   }
 ];
 
 export const ACCESSORY_PIECES: AccessoryPiece[] = [
+  {
+    id: 'acc-none',
+    name: 'Không Đeo Phụ Kiện',
+    category: 'accessories',
+    isTraditional: false,
+    styleTag: 'Minimalist Clean',
+    description: 'Giữ nét mộc mạc nguyên bản của y phục, không điểm xuyết vòng cổ, kính hay quạt cầm tay.',
+    silhouetteSvg: 'none'
+  },
   {
     id: 'acc-silver-kieng',
     name: 'Kiềng Bạc Chạm Hoa Văn Trống Đồng',
@@ -582,34 +621,115 @@ export const COLORS: ColorOption[] = [
   }
 ];
 
+export const SKIN_TONE_OPTIONS = [
+  { id: 'porcelain', name: 'Bạch Ngọc', hex: '#F7E7D9', shadowHex: '#E5CFBE', desc: 'Trắng sứ thanh khiết Á Đông' },
+  { id: 'warm-ivory', name: 'Ngà Ấm', hex: '#EFE0D3', shadowHex: '#DCBEAB', desc: 'Sáng tự nhiên rạng rỡ' },
+  { id: 'golden-honey', name: 'Mật Ong', hex: '#E5CDAE', shadowHex: '#CCA989', desc: 'Ấm áp khỏe khoắn nhiệt đới' },
+  { id: 'caramel', name: 'Bánh Mật', hex: '#D2AF89', shadowHex: '#B28E67', desc: 'Nâu rám nắng thời thượng' },
+];
+
 export const AVATAR_MODELS: AvatarModel[] = [
   {
     id: 'avatar-female-classic',
-    name: 'Tố Nữ Cổ Điển',
+    name: 'Tố Nữ Đài Các',
+    vietnameseTitle: 'Cổ Điển Hoàng Gia',
     gender: 'female',
-    description: 'Nét đẹp Á Đông đài các, tóc búi lụa thanh thoát, phong thái trang nhã.',
-    faceStyle: 'female-classic'
+    badge: 'Cổ Phong',
+    vibe: 'Đoan trang · Đài các · Quý phái',
+    skinTone: 'porcelain',
+    skinHex: '#F7E7D9',
+    shadowHex: '#E5CFBE',
+    blushHex: '#E8A598',
+    lipHex: '#9C3A3A',
+    description: 'Nét đẹp Á Đông đài các, chân mày lá liễu thanh thoát, tóc búi lụa cài trâm ngọc cung đình.',
+    hairDescription: 'Búi tóc cao cài trâm ngọc dát vàng',
+    faceStyle: 'female-classic',
+    quote: 'Nét kiêu sa trầm mặc ngàn năm văn hiến Kinh kỳ.'
   },
   {
     id: 'avatar-female-genz',
     name: 'Hà Thành Gen Z',
+    vietnameseTitle: 'Phố Thị Đương Đại',
     gender: 'female',
-    description: 'Tóc ngắn cá tính, ánh nhìn sắc sảo, năng động và hiện đại.',
-    faceStyle: 'female-modern'
+    badge: 'Gen Z Trend',
+    vibe: 'Phá cách · Năng động · Thời thượng',
+    skinTone: 'warm-ivory',
+    skinHex: '#EFE0D3',
+    shadowHex: '#DCBEAB',
+    blushHex: '#F29E85',
+    lipHex: '#B84545',
+    description: 'Tóc bob ngắn tỉa layer, mái bay hiện đại, ánh nhìn sắc sảo tự tin phối hợp di sản cùng streetwear.',
+    hairDescription: 'Tóc Bob ngắn thời thượng tỉa layer',
+    faceStyle: 'female-modern',
+    quote: 'Hơi thở di sản trong nhịp sống Gen Z không giới hạn.'
+  },
+  {
+    id: 'avatar-female-poet',
+    name: 'Nàng Thơ Xứ Huế',
+    vietnameseTitle: 'Trầm Tích Sông Hương',
+    gender: 'female',
+    badge: 'Nàng Thơ',
+    vibe: 'Dịu dàng · Thơ mộng · Sâu lắng',
+    skinTone: 'golden-honey',
+    skinHex: '#E5CDAE',
+    shadowHex: '#CCA989',
+    blushHex: '#DE9688',
+    lipHex: '#A34850',
+    description: 'Mái tóc dài bồng bềnh buông nhẹ một bên vai, nụ cười e ấp đượm chất thơ mộng cố đô.',
+    hairDescription: 'Tóc dài buông lơi một bên vai cài hoa sen',
+    faceStyle: 'female-poet',
+    quote: 'Dịu dàng nghiêng nón bài thơ bên hiên chùa cổ.'
   },
   {
     id: 'avatar-male-scholar',
     name: 'Thư Sinh Nho Nhã',
+    vietnameseTitle: 'Đông Kinh Nghĩa Thục',
     gender: 'male',
-    description: 'Khuôn mặt góc cạnh cương trực, phong thái nho sĩ đương đại.',
-    faceStyle: 'male-sharp'
+    badge: 'Nho Sĩ',
+    vibe: 'Trí thức · Điềm đạm · Cương trực',
+    skinTone: 'warm-ivory',
+    skinHex: '#EFE0D3',
+    shadowHex: '#DCBEAB',
+    blushHex: '#DDA094',
+    lipHex: '#A8534C',
+    description: 'Gương mặt tuấn tú góc cạnh, sống mũi cao thẳng, tóc rẽ ngôi cổ điển phong thái nho nhã.',
+    hairDescription: 'Tóc ngắn rẽ ngôi 7/3 lịch lãm',
+    faceStyle: 'male-sharp',
+    quote: 'Văn phong đĩnh đạc, cốt cách thanh cao.'
+  },
+  {
+    id: 'avatar-male-dandy',
+    name: 'Công Tử Phố Cổ',
+    vietnameseTitle: 'Lãng Tử Hà Thành',
+    gender: 'male',
+    badge: 'Lãng Tử',
+    vibe: 'Phong trần · Cuốn hút · Nghệ sĩ',
+    skinTone: 'caramel',
+    skinHex: '#D2AF89',
+    shadowHex: '#B28E67',
+    blushHex: '#C98575',
+    lipHex: '#9E4E42',
+    description: 'Làn da rám nắng khỏe khoắn, tóc gợn sóng nghệ sĩ, ánh nhìn cuốn hút mang phong thái lãng tử.',
+    hairDescription: 'Tóc xoăn sóng nhẹ lãng tử',
+    faceStyle: 'male-dandy',
+    quote: 'Chất lãng đãng nghìn năm của chàng trai phố cổ.'
   },
   {
     id: 'avatar-androgynous',
     name: 'Haute Couture Editorial',
+    vietnameseTitle: 'Sàn Diễn Quốc Tế',
     gender: 'androgynous',
-    description: 'Đường nét phi giới tính, chuẩn người mẫu sàn diễn quốc tế.',
-    faceStyle: 'editorial'
+    badge: 'High Fashion',
+    vibe: 'Sắc lạnh · Phi giới tính · Tiên phong',
+    skinTone: 'porcelain',
+    skinHex: '#F7E7D9',
+    shadowHex: '#E5CFBE',
+    blushHex: '#D9988C',
+    lipHex: '#8C3838',
+    description: 'Gò má sắc nét, tóc vuốt ngược bóng mượt runway, ánh nhìn sắc lạnh biểu trưng của thời trang cao cấp.',
+    hairDescription: 'Tóc vuốt ngược Slicked-back High-Fashion',
+    faceStyle: 'editorial',
+    quote: 'Bứt phá ranh giới thời trang với ngôn ngữ hình thể quốc tế.'
   }
 ];
 
@@ -688,9 +808,35 @@ export const EVENT_OPTIONS: EventOption[] = [
 
 // Helper: Cultural Safeguard Integrity Checker
 export const checkCulturalIntegrity = (selection: OutfitSelection): CulturalIntegrityCheck => {
-  const { garmentId, styleId, bottomId, headwearId } = selection;
+  const { garmentId, styleId, bottomId, headwearId, footwearId } = selection;
 
-  // Rule 1: Áo Đối Khâm cung đình đại triều phối quá phá cách Y2K
+  // Rule 1: Áo Dài truyền thống phối Quần Shorts / Váy siêu ngắn (Vi phạm tính kín đáo)
+  if (garmentId === 'ao-dai' && bottomId === 'shorts-denim-mini') {
+    return {
+      isSafe: false,
+      severity: 'warning',
+      title: 'Vi Phạm Tính Kín Đáo & Chuẩn Mực Áo Dài',
+      message: 'Áo Dài từ thời Lemur đến nay luôn quy định mặc kèm quần dài chấm gót (quần lụa hoặc quần tây), tôn nét đoan trang thắt đáy lưng ong. Phối cùng quần shorts siêu ngắn làm mất đi tính thẩm mỹ thanh lịch vốn có.',
+      reason: 'Cấu trúc tà xẻ cao đến eo của Áo Dài vốn được tính toán ăn khớp tuyệt đối với quần dài che kín phần hông để tôn vinh sự kín đáo tao nhã.',
+      respectfulSuggestion: 'Hãy phối Áo Dài cùng Quần lụa ống rộng di sản, Quần tây may đo cạp cao hoặc Chân váy dập ly midi xếp tầng duyên dáng.',
+      culturalContextRef: 'Lịch sử Canh tân Áo Dài Lemur & Tiêu chuẩn Phục trang Phụ nữ Việt Nam'
+    };
+  }
+
+  // Rule 2: Áo Ngũ Thân cung đình phối Dép lê xỏ ngón xuề xòa
+  if (garmentId === 'ao-ngu-than' && footwearId === 'shoes-dep-le-flipflop') {
+    return {
+      isSafe: false,
+      severity: 'warning',
+      title: 'Xung Đột Tính Trang Trọng Của Áo Ngũ Thân',
+      message: 'Áo Ngũ Thân là biểu tượng mực thước của Nho phong phương Đông và quy chế triều Nguyễn. Dép lê xỏ ngón mang tính sinh hoạt buông tuồng, làm mai một cốt cách trang nghiêm của y phục.',
+      reason: 'Áo ngũ thân với cổ đứng nghiêm cẩn và 5 cúc tượng trưng cho Ngũ Thường (Nhân - Lễ - Nghĩa - Trí - Tín) đòi hỏi phụ kiện đi cùng có tính chỉn chu, tươm tất.',
+      respectfulSuggestion: 'Gợi ý kết hợp cùng Giày da Penny Loafer thanh lịch, Chunky Sneaker trắng retro năng động hoặc Guốc mộc quai nhung truyền thống.',
+      culturalContextRef: 'Khâm Định Đại Nam Hội Điển Sự Lệ & Quy chế Y phục Triều Nguyễn'
+    };
+  }
+
+  // Rule 3: Áo Đối Khâm cung đình đại triều phối quá phá cách Y2K
   if (garmentId === 'ao-doi-kham' && styleId === 'style-y2k') {
     return {
       isSafe: false,
@@ -703,20 +849,20 @@ export const checkCulturalIntegrity = (selection: OutfitSelection): CulturalInte
     };
   }
 
-  // Rule 2: Khăn Đóng cung đình phối cùng Áo Bà Ba Nam Bộ
-  if (garmentId === 'ao-ba-ba' && headwearId === 'head-khan-dong') {
+  // Rule 4: Khăn Đóng / Khăn Mỏ Quạ xứ Bắc phối cùng Áo Bà Ba Nam Bộ
+  if (garmentId === 'ao-ba-ba' && (headwearId === 'head-khan-dong' || headwearId === 'head-khan-mo-qua')) {
     return {
       isSafe: false,
       severity: 'caution',
       title: 'Xung Đột Ngữ Cảnh Văn Hóa Vùng Miền',
-      message: 'Khăn đóng (khăn xếp chữ Nhân) theo nghi thức phương Bắc / cung đình Huế khi phối cùng Áo Bà Ba sông nước Nam Bộ tạo cảm giác khiên cưỡng, không đồng nhất về văn hóa sinh hoạt.',
-      reason: 'Áo bà ba gắn với lối sống phóng khoáng, lao động sông nước miền Tây; khăn đóng gắn với lễ nghi nho giáo kinh kỳ.',
-      respectfulSuggestion: 'Hãy thử đổi sang Khăn Bandana tơ tằm, Mũ beret hiện đại hoặc để tóc tự nhiên cài kẹp ngọc.',
+      message: 'Khăn mỏ quạ và khăn đóng chữ Nhân là di sản xứ Bắc, gắn với yếm đào áo tứ thân; trong khi Áo Bà Ba là linh hồn của phù sa sông nước Nam Bộ. Kết hợp này tạo cảm giác khiên cưỡng, lẫn lộn sinh hoạt.',
+      reason: 'Áo bà ba gắn với lối sống phóng khoáng, lao động sông nước miền Tây; khăn đóng gắn với lễ nghi nho giáo kinh kỳ xứ Bắc.',
+      respectfulSuggestion: 'Hãy thử đổi sang Khăn Bandana tơ tằm họa tiết hoa lam, Mũ beret phong cách Indochine hoặc để tóc tự nhiên cài kẹp ngọc.',
       culturalContextRef: 'Văn hóa trang phục dân gian Nam Bộ & Bắc Bộ'
     };
   }
 
-  // Rule 3: Áo Tứ Thân phối cùng Quần Cargo túi hộp quá hầm hố
+  // Rule 5: Áo Tứ Thân phối cùng Quần Cargo túi hộp quá hầm hố
   if (garmentId === 'ao-tu-than' && bottomId === 'pants-cargo-minimal') {
     return {
       isSafe: false,
@@ -726,6 +872,32 @@ export const checkCulturalIntegrity = (selection: OutfitSelection): CulturalInte
       reason: 'Cấu trúc áo tứ thân có 4 vạt rủ mềm và thắt lưng buộc nút, đòi hỏi phần thân dưới có độ suông êm dịu.',
       respectfulSuggestion: 'Đề xuất đổi sang Chân váy dập ly midi bay bổng hoặc Quần lụa ống rộng đen truyền thống.',
       culturalContextRef: 'Trang phục Quan họ Bắc Ninh & Hội Lim'
+    };
+  }
+
+  // Rule 6: Áo Dài phối dép lê xuề xòa
+  if (garmentId === 'ao-dai' && footwearId === 'shoes-dep-le-flipflop') {
+    return {
+      isSafe: false,
+      severity: 'caution',
+      title: 'Cần Nâng Cấp Phụ Kiện Cho Tà Áo Dài',
+      message: 'Áo Dài bay bổng tha thướt kết hợp với dép lê tạo cảm giác chưa chỉn chu, làm giảm vẻ thanh thoát của dáng đi.',
+      reason: 'Tà áo dài dài chấm gót cần giày có độ nâng hoặc guốc mộc để giữ tà áo không quệt đất và tạo dáng thanh thoát.',
+      respectfulSuggestion: 'Nên kết hợp cùng Guốc mộc sơn mài, Mule gót vuông hoặc Giày sneaker retro để tôn dáng tà áo.',
+      culturalContextRef: 'Mỹ học Trang phục Dân tộc Việt Nam'
+    };
+  }
+
+  // Rule 7: Áo Tứ Thân phối Y2K nổi loạn
+  if (garmentId === 'ao-tu-than' && styleId === 'style-y2k') {
+    return {
+      isSafe: false,
+      severity: 'caution',
+      title: 'Cân Nhắc Tinh Thần Lễ Hội Quan Họ',
+      message: 'Áo Tứ Thân Kinh Bắc gắn liền với nét đẹp nền nã, ý nhị của Liền chị. Phong cách Y2K vị lai nổi loạn có thể làm đứt gãy sự mềm mại của yếm đào và ruột bao lụa.',
+      reason: 'Vẻ đẹp tứ thân nằm ở đường thắt lưng ong kín đáo và sự thanh tân của các lớp yếm màu sắc.',
+      respectfulSuggestion: 'Hãy thử phong cách "Soft Girl & Poetic" hoặc "Modern Street" với chân váy dập ly để giữ nguyên nét thơ.',
+      culturalContextRef: 'Dân ca Quan họ & Trang phục truyền thống Kinh Bắc'
     };
   }
 
@@ -1379,5 +1551,419 @@ export const AI_PROMPT_EXAMPLES: AIStylistPromptExample[] = [
       colorId: 'charcoal-black'
     },
     reasoning: 'Áo ngũ thân đen mực tàu mở cúc ngực kết hợp cùng kính râm oval và sneaker đế hầm hố. Sự tôn trọng văn hóa nằm ở đường may chuẩn, còn cá tính nằm ở cách biến hóa tự do.'
+  },
+  {
+    id: 'ai-example-6',
+    prompt: 'Dự lễ cưới ngoài trời phong cách Bohemian & Di sản',
+    targetContext: 'Lễ cưới sân vườn ngoài trời, lãng mạn, tôn vinh truyền thống',
+    suggestedSelection: {
+      garmentId: 'ao-dai',
+      bottomId: 'skirt-pleated-midi',
+      headwearId: 'head-man-cach-tan',
+      footwearId: 'shoes-minimal-mule',
+      bagId: 'bag-woven-coi',
+      accessoryId: 'acc-jade-earrings',
+      styleId: 'style-soft',
+      colorId: 'lotus-pink'
+    },
+    reasoning: 'Áo dài lụa màu hồng sen đào kết hợp chân váy dập ly xòe nhẹ nhàng và mấn ngọc, điểm xuyết khuyên tai ngọc bích tạo vẻ đẹp thơ mộng, vừa đúng nghi lễ chúc phúc vừa phóng khoáng hòa vào thiên nhiên.'
   }
 ];
+
+// =========================================================================
+// 1. WHERE TO WEAR? (Bản đồ Vibe Check & Điểm Đến Thực Tế Tại Việt Nam)
+// =========================================================================
+export const WHERE_TO_WEAR_LOCATIONS: WhereToWearLocation[] = [
+  {
+    id: 'loc-hoang-thanh',
+    name: 'Hoàng Thành Thăng Long & Đoan Môn',
+    city: 'Hà Nội',
+    category: 'heritage',
+    categoryName: 'Di Tích Cung Đình',
+    address: '19C Hoàng Diệu, Điện Bàn, Ba Đình, Hà Nội',
+    vibeTag: 'Heritage Old Money & Cung Đình Trang Trọng',
+    matchScore: 98,
+    bestTime: '07:30 - 09:30 sáng (Nắng xiên rọi qua vòm cổng Đoan Môn)',
+    photoAngleTip: 'Đứng tại bậc thềm Điện Kính Thiên hoặc chính giữa vòm cuốn Đoan Môn, chụp góc thấp để lấy trọn vạt tà áo bay và chiều sâu kiến trúc cổ kính.',
+    recommendedGarments: ['ao-ngu-than', 'ao-tac', 'ao-giao-linh', 'ao-nhat-binh', 'ao-doi-kham'],
+    stylingTips: 'Nên kết hợp cùng Kiềng Bạc Chạm Trống Đồng, Quần Lụa Tơ Tằm và Giày Loafer/Guốc Mộc để tạo thần thái đĩnh đạc, nho nhã.',
+    quote: 'Nơi nghìn năm văn hiến giao hòa cùng nhịp bước của thế hệ mới.',
+    heroColor: '#8B1E1E',
+    coordinates: { lat: 21.0348, lng: 105.8404 },
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Ho%C3%A0ng+Th%C3%A0nh+Th%C4%83ng+Long+19C+Ho%C3%A0ng+Di%E1%BB%87u+H%C3%A0+N%E1%BB%99i'
+  },
+  {
+    id: 'loc-dai-noi-hue',
+    name: 'Đại Nội Cố Đô & Lăng Khải Định',
+    city: 'Huế',
+    category: 'heritage',
+    categoryName: 'Cố Đô Di Sản',
+    address: 'Đường 23/8, Thuận Hòa, TP. Huế, Thừa Thiên Huế',
+    vibeTag: 'Imperial Luxury & Hoàng Gia Trầm Mặc',
+    matchScore: 96,
+    bestTime: '15:30 - 17:15 chiều (Ánh hoàng hôn vàng cam buông xuống Ngọ Môn)',
+    photoAngleTip: 'Chụp trên cầu Trung Đạo hướng nhìn ra Ngọ Môn hoặc dọc hành lang đỏ sơn son thếp vàng, xoay nhẹ người 45 độ khoe đường thêu nẹp áo.',
+    recommendedGarments: ['ao-nhat-binh', 'ao-tac', 'ao-doi-kham', 'ao-ngu-than'],
+    stylingTips: 'Lý tưởng nhất với sắc Tím Cung Đình hoặc Đỏ Sơn Mài, mang Mấn Ngọc Trai và quạt xếp thủ công.',
+    quote: 'Dấu ấn cung đình vàng son một thuở lắng đọng trong từng nếp áo gấm.',
+    heroColor: '#532D4B',
+    coordinates: { lat: 16.4697, lng: 107.5775 },
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i+N%E1%BB%99i+Hu%E1%BA%BF+%C4%91%C6%B0%E1%BB%9Dng+23%2F8+Thu%E1%BA%ADn+H%C3%B2a+Hu%E1%BA%BF'
+  },
+  {
+    id: 'loc-the-factory-art',
+    name: 'The Factory Contemporary Arts Centre',
+    city: 'TP. Hồ Chí Minh',
+    category: 'contemporary_art',
+    categoryName: 'Triển Lãm Nghệ Thuật Đương Đại',
+    address: '15 Nguyễn Ư Dĩ, Thảo Điền, TP. Thủ Đức, TP.HCM',
+    vibeTag: 'Cyberpunk Noir & Avant-Garde Remix',
+    matchScore: 94,
+    bestTime: '14:00 - 18:00 (Ánh sáng studio và gallery đương đại)',
+    photoAngleTip: 'Tạo dáng trước các mảng tường bê tông xám hoặc cụm installation nghệ thuật, tư thế tự tin khoe phối áo Giao Lĩnh mở cúc với kính râm oval.',
+    recommendedGarments: ['ao-giao-linh', 'ao-ngu-than', 'ao-doi-kham'],
+    stylingTips: 'Mix Áo Giao Lĩnh đen mực tàu cùng Quần Cargo, Chelsea Boots và Tai Nghe Over-Ear để toát lên chất avant-garde hiện đại.',
+    quote: 'Sự giao thoa bất ngờ giữa di sản Việt và tinh thần nghệ thuật trừu tượng thế kỷ 21.',
+    heroColor: '#23395B',
+    coordinates: { lat: 10.8037, lng: 106.7329 },
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=15+Nguy%E1%BB%85n+%C6%AF+D%C4%A9+Th%E1%BA%A3o+%C4%90i%E1%BB%81n+Th%E1%BB%A7+%C4%90%E1%BB%A9c+TPHCM'
+  },
+  {
+    id: 'loc-vcca-hanoi',
+    name: 'Trung Tâm Nghệ Thuật Đương Đại VCCA',
+    city: 'Hà Nội',
+    category: 'contemporary_art',
+    categoryName: 'Không Gian Triển Lãm Hiện Đại',
+    address: 'B1-R3, Royal City, 72A Nguyễn Trãi, Thanh Xuân, Hà Nội',
+    vibeTag: 'Minimalist Campus & High Fashion Gallery',
+    matchScore: 92,
+    bestTime: '10:00 - 19:00 (Ánh sáng spotlight gallery hoàn hảo cho lookbook)',
+    photoAngleTip: 'Chụp toàn thân với background tranh trừu tượng khổ lớn, phối hợp ánh sáng spotlight chiếu rọi chất liệu lụa bóng.',
+    recommendedGarments: ['ao-ngu-than', 'ao-tu-than', 'ao-dai'],
+    stylingTips: 'Sơ vin vạt trước (French Tuck) với Quần Tây May Đo Cạp Cao và Giày Mule tối giản.',
+    quote: 'Tuyên ngôn phong cách của người trẻ trí thức yêu nét đẹp cội nguồn.',
+    heroColor: '#1E382B',
+    coordinates: { lat: 21.0028, lng: 105.8158 },
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=VCCA+Vincom+Mega+Mall+Royal+City+72A+Nguy%E1%BB%85n+Tr%C3%A3i+H%C3%A0+N%E1%BB%99i'
+  },
+  {
+    id: 'loc-pho-co-hoi-an',
+    name: 'Phố Cổ Hội An & Giàn Hoa Giấy',
+    city: 'Hội An',
+    category: 'heritage',
+    categoryName: 'Phố Cổ Sông Hoài',
+    address: 'Trần Phú & Bạch Đằng, TP. Hội An, Quảng Nam',
+    vibeTag: 'Poetic Chic & Hoài Niệm Phố Hội',
+    matchScore: 95,
+    bestTime: '06:30 - 08:00 sáng hoặc 18:30 phố lên đèn hoa đăng',
+    photoAngleTip: 'Tựa nhẹ lưng vào bức tường vàng rêu phong dưới giàn hoa giấy rực rỡ, góc chụp nghiêng lấy nụ cười nhẹ và quạt gỗ xếp.',
+    recommendedGarments: ['ao-ba-ba', 'ao-tu-than', 'ao-dai', 'ao-ngu-than'],
+    stylingTips: 'Màu Hồng Sen Đào hoặc Vàng Hoàng Yến phối cùng Chân Váy Quấn Xẻ Tà, Túi Cói Đan Mây và Guốc Mộc.',
+    quote: 'Chạm vào ký ức êm đềm bên dòng sông Hoài với tà áo mộc mạc.',
+    heroColor: '#D97706',
+    coordinates: { lat: 15.8778, lng: 108.3283 },
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%91+C%E1%BB%95+H%E1%BB%99i+An+Tr%E1%BA%A7n+Ph%C3%BA+B%E1%BA%A1ch+%C4%90%E1%BA%B1ng+Qu%E1%BA%A3ng+Nam'
+  },
+  {
+    id: 'loc-industrial-cafe',
+    name: 'Quán Cafe Concept Industrial & Brutalist',
+    city: 'TP. Hồ Chí Minh',
+    category: 'concept_cafe',
+    categoryName: 'Cafe Không Gian Sáng Tạo',
+    address: 'Các chuỗi concept: Là Việt, The Running Bean, Okkio Caffe',
+    vibeTag: 'Daily Streetwear & Cafe Chill Cuối Tuần',
+    matchScore: 91,
+    bestTime: '09:00 - 11:30 sáng hoặc 15:00 - 17:00',
+    photoAngleTip: 'Ngồi tại quầy bar inox/kim loại, tay cầm ly cà phê thủ công, chụp góc bán thân bắt cận chi tiết khuy cài ngọc và cổ áo năm thân.',
+    recommendedGarments: ['ao-ba-ba', 'ao-ngu-than', 'ao-giao-linh'],
+    stylingTips: 'Áo Bà Ba / Áo Ngũ Thân phối Quần Denim Ống Rộng Rách nhẹ và Chunky Sneaker — thoải mái làm việc hay trò chuyện cùng bạn bè.',
+    quote: 'Khi cổ phục bước ra đời sống hàng ngày một cách tự nhiên và duyên dáng nhất.',
+    heroColor: '#475569',
+    coordinates: { lat: 10.7769, lng: 106.6953 },
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Okkio+Caffe+The+Running+Bean+L%C3%A0+Vi%E1%BB%87t+TP+H%E1%BB%93+Ch%C3%AD+Minh'
+  },
+  {
+    id: 'loc-trung-thu-luong-nhu-hoc',
+    name: 'Phố Lồng Đèn Lương Nhữ Học & Phố Đi Bộ',
+    city: 'TP. Hồ Chí Minh',
+    category: 'festival',
+    categoryName: 'Lễ Hội Đèn Lồng & Dạo Phố',
+    address: 'Khu phố cổ Chợ Lớn, Quận 5, TP. Hồ Chí Minh',
+    vibeTag: 'Festive Vibrant & Ánh Sáng Lung Linh',
+    matchScore: 97,
+    bestTime: '18:00 - 21:30 tối mùa Trung Thu & Lễ Hội',
+    photoAngleTip: 'Đứng giữa rừng đèn lồng rực rỡ sắc màu, tận dụng bokeh ánh đèn lấp lánh phản chiếu trên nền áo lụa bóng.',
+    recommendedGarments: ['ao-ba-ba', 'ao-tu-than', 'ao-dai', 'ao-ngu-than'],
+    stylingTips: 'Phối Áo Sắc Đỏ Sơn Mài hoặc Hồng Sen cùng Mấn Ngọc Cách Tân và Túi Cói, cầm lồng đèn con giống truyền thống.',
+    quote: 'Sống trọn khoảnh khắc lễ hội tuổi thơ rực rỡ trong sắc áo quê hương.',
+    heroColor: '#E11D48',
+    coordinates: { lat: 10.7519, lng: 106.6601 },
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%91+l%E1%BB%93ng+%C4%91%C3%A8n+L%C6%B0%C6%A1ng+Nh%E1%BB%AF+H%E1%BB%8Dc+Qu%E1%BA%ADn+5+TPHCM'
+  },
+  {
+    id: 'loc-monsoon-indie',
+    name: 'Monsoon Music Festival & Indie Concert',
+    city: 'Hà Nội',
+    category: 'indie_event',
+    categoryName: 'Đêm Nhạc Sống & Festival Trẻ',
+    address: 'Quảng trường Đông Kinh Nghĩa Thục hoặc Sân khấu Hoàng Thành',
+    vibeTag: 'Gen Z Rebellion & High Energy',
+    matchScore: 93,
+    bestTime: '19:00 - 23:00 (Không gian lễ hội âm nhạc đêm bùng nổ)',
+    photoAngleTip: 'Bắt khoảnh khắc chuyển động (motion blur) khi hòa mình vào điệu nhạc, tà áo tung bay dưới ánh đèn laser sân khấu.',
+    recommendedGarments: ['ao-giao-linh', 'ao-ngu-than'],
+    stylingTips: 'Mix cùng Quần Cargo phản quang, Sneaker hầm hố và Khăn Bandana lụa buộc đầu cá tính.',
+    quote: 'Âm nhạc đương đại và bản sắc di sản cùng hòa chung một nhịp đập tuổi trẻ.',
+    heroColor: '#7C3AED',
+    coordinates: { lat: 21.0315, lng: 105.8524 },
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Qu%E1%BA%A3ng+tr%C6%B0%E1%BB%9Dng+%C4%90%C3%B4ng+Kinh+Ngh%C4%A9a+Th%E1%BB%A5c+Ho%C3%A0n+Ki%E1%BA%BFm+H%C3%A0+N%E1%BB%99i'
+  }
+];
+
+// =========================================================================
+// 2. TỦ ĐỒ CỦA TÔI (Sustainable Digital Wardrobe & AI Scanner)
+// =========================================================================
+export const SUSTAINABLE_WARDROBE_ITEMS: SustainableItem[] = [
+  {
+    id: 'sus-levis-jeans',
+    name: 'Quần Jeans Levi’s 501 Vintage Cũ Có Sẵn',
+    category: 'bottom',
+    brandOrType: 'Vintage Denim có sẵn trong tủ',
+    material: '100% Rigid Cotton Denim',
+    waterSavedLiters: 3200,
+    co2SavedKg: 8.5,
+    compatibilityNote: 'Độ cứng cáp và màu chàm của denim tôn lên sự mềm mại của tà áo Ngũ Thân hoặc Áo Bà Ba, tạo độ tương phản chất liệu cực hút mắt.',
+    targetSlotId: 'bottomId',
+    mappedItemId: 'pants-denim-wide',
+    icon: '👖'
+  },
+  {
+    id: 'sus-uniqlo-trousers',
+    name: 'Quần Tây Xếp Ly May Đo Công Sở Có Sẵn',
+    category: 'bottom',
+    brandOrType: 'Smart Pleated Trousers (Uniqlo/Zara)',
+    material: 'Polyester Blend co giãn thoáng khí',
+    waterSavedLiters: 1800,
+    co2SavedKg: 5.2,
+    compatibilityNote: 'Phom ống đứng chuẩn mực giúp tôn dáng thư sinh khi sơ vin cùng Áo Ngũ Thân hoặc Áo Giao Lĩnh cạp cao.',
+    targetSlotId: 'bottomId',
+    mappedItemId: 'pants-tailored-high',
+    icon: '🩳'
+  },
+  {
+    id: 'sus-adidas-samba',
+    name: 'Đôi Sneaker Adidas Samba / Gazelle Đi Hàng Ngày',
+    category: 'footwear',
+    brandOrType: 'Classic Low-top Sneaker',
+    material: 'Leather & Suede Sole',
+    waterSavedLiters: 2400,
+    co2SavedKg: 6.8,
+    compatibilityNote: 'Phom dáng thon gọn giúp bước đi thanh thoát, kéo gần khoảng cách giữa cổ phục trang nghiêm và phong cách dạo phố trẻ trung.',
+    targetSlotId: 'footwearId',
+    mappedItemId: 'shoes-chunky-sneaker',
+    icon: '👟'
+  },
+  {
+    id: 'sus-tote-canvas',
+    name: 'Túi Tote Vải Canvas In Typo Nghệ Thuật',
+    category: 'bag',
+    brandOrType: 'Eco Canvas Everyday Tote',
+    material: '100% Recycled Cotton Canvas',
+    waterSavedLiters: 1200,
+    co2SavedKg: 3.4,
+    compatibilityNote: 'Chất liệu vải mộc thân thiện môi trường, phù hợp mang sách vở laptop đi học hoặc đi cà phê làm việc.',
+    targetSlotId: 'bagId',
+    mappedItemId: 'bag-crossbody-nylon',
+    icon: '👜'
+  },
+  {
+    id: 'sus-dr-martens',
+    name: 'Giày Da Chelsea Boots / Dr. Martens 1461',
+    category: 'footwear',
+    brandOrType: 'Leather Oxford / Chelsea Boots',
+    material: 'Smooth Black Leather',
+    waterSavedLiters: 3500,
+    co2SavedKg: 9.6,
+    compatibilityNote: 'Đế đệm cao và chất da đen bóng tạo điểm tựa đĩnh đạc cho vạt áo Giao Lĩnh hoặc Áo Tấc khi đi sự kiện trang trọng.',
+    targetSlotId: 'footwearId',
+    mappedItemId: 'shoes-chelsea-boots',
+    icon: '👞'
+  },
+  {
+    id: 'sus-pleated-skirt',
+    name: 'Chân Váy Dập Ly Dáng Dài Vintage',
+    category: 'bottom',
+    brandOrType: 'Midi Pleated Vintage Skirt',
+    material: 'Soft Chiffon / Linen Blend',
+    waterSavedLiters: 2100,
+    co2SavedKg: 5.9,
+    compatibilityNote: 'Độ xòe rủ bồng bềnh kết hợp hoàn hảo cùng Áo Dài Tố Nữ hoặc Áo Tứ Thân thắt dải yếm lụa.',
+    targetSlotId: 'bottomId',
+    mappedItemId: 'skirt-pleated-midi',
+    icon: '👗'
+  }
+];
+
+// =========================================================================
+// 3. SMART AI CONTEXT (Gợi Ý Theo Ngữ Cảnh Thời Gian Thực & Thời Tiết)
+// =========================================================================
+export const REALTIME_SMART_CONTEXTS: SmartAIContext[] = [
+  {
+    id: 'ctx-hanoi-autumn-cold',
+    title: 'Hà Nội Đông Se Lạnh (15°C - 18°C)',
+    seasonOrFestival: 'Mùa Đông Gió Bấc & Phố Cổ Hà Nội',
+    city: 'Hà Nội',
+    temperature: '15°C',
+    weatherCondition: 'Gió mùa đông bắc nhẹ, trời se lạnh khô ráo',
+    icon: '🍁',
+    aiPromptMessage: 'Hà Nội hôm nay 15°C se lạnh, AI gợi ý bạn phối Áo Tấc với một chiếc áo cổ lọ (turtleneck) mỏng bên trong để giữ ấm mà vẫn giữ chuẩn vibe Heritage sang trọng.',
+    stylingRecommendation: 'Phối Áo Tấc hoặc Áo Ngũ Thân lụa dày dặn, mặc kèm áo len cổ lọ mỏng bên trong, đi cùng Quần Tây may đo và Chelsea Boots.',
+    suggestedSelection: {
+      garmentId: 'ao-tac',
+      bottomId: 'pants-tailored-high',
+      footwearId: 'shoes-chelsea-boots',
+      accessoryId: 'acc-silver-kieng',
+      fabricTexture: 'brocade',
+      textureIntensity: 'rich',
+      colorId: 'lacquer-red',
+      tuckStyle: 'untucked'
+    },
+    destinationRefId: 'loc-hoang-thanh',
+    badge: 'Trending Thời Tiết Hôm Nay'
+  },
+  {
+    id: 'ctx-trung-thu-lantern',
+    title: 'Mùa Trung Thu Dạo Phố Lồng Đèn',
+    seasonOrFestival: 'Lễ Hội Trăng Rằm & Phố Lồng Đèn',
+    city: 'TP. Hồ Chí Minh / Hà Nội',
+    temperature: '26°C',
+    weatherCondition: 'Đêm trăng thanh gió mát, phố xá lên đèn rực rỡ',
+    icon: '🏮',
+    aiPromptMessage: 'Chỉ còn ít ngày nữa là đến Trung Thu, thử ngay bản phối Áo Bà Ba phong cách Y2K để dạo phố lồng đèn Lương Nhữ Học hay Phố Đi Bộ nhé!',
+    stylingRecommendation: 'Áo Bà Ba sắc vàng hoàng yến hoặc hồng cánh sen, phối Chân Váy Dập Ly hoặc Quần Denim, điểm xuyết Mấn Ngọc Trai và quạt gỗ xếp.',
+    suggestedSelection: {
+      garmentId: 'ao-ba-ba',
+      bottomId: 'skirt-pleated-midi',
+      headwearId: 'head-man-cach-tan',
+      footwearId: 'shoes-minimal-mule',
+      bagId: 'bag-woven-coi',
+      accessoryId: 'acc-wooden-fan',
+      colorId: 'imperial-gold',
+      tuckStyle: 'half-tuck'
+    },
+    destinationRefId: 'loc-trung-thu-luong-nhu-hoc',
+    badge: 'Mùa Lễ Hội Đang Diễn Ra'
+  },
+  {
+    id: 'ctx-saigon-sunny',
+    title: 'Sài Gòn Nắng Ráo (29°C - 32°C)',
+    seasonOrFestival: 'Ngày Nắng Đẹp & Cafe Sáng Thảo Điền',
+    city: 'TP. Hồ Chí Minh',
+    temperature: '31°C',
+    weatherCondition: 'Trời trong xanh, nắng ấm chan hòa',
+    icon: '☀️',
+    aiPromptMessage: 'Sài Gòn 31°C nắng đẹp, AI khuyên chọn Áo Ngũ Thân chất liệu Vải Lanh (Linen) thoáng khí cùng Quần Lụa Tơ Tằm mềm mát để thoải mái cafe.',
+    stylingRecommendation: 'Áo Ngũ Thân tay chẽn hoặc Áo Đối Khâm dáng ngắn, mở tà nhẹ nhàng phối cùng Sneaker và Kính Râm Oval chống tia UV.',
+    suggestedSelection: {
+      garmentId: 'ao-ngu-than',
+      bottomId: 'pants-silk-wide',
+      footwearId: 'shoes-chunky-sneaker',
+      accessoryId: 'acc-sunglasses-oval',
+      fabricTexture: 'linen',
+      textureIntensity: 'medium',
+      colorId: 'jade-green',
+      tuckStyle: 'untucked'
+    },
+    destinationRefId: 'loc-industrial-cafe',
+    badge: 'Thoáng Khí & Năng Động'
+  },
+  {
+    id: 'ctx-dalat-foggy',
+    title: 'Đà Lạt Mù Sương & Chiều Tà (14°C)',
+    seasonOrFestival: 'Cao Nguyên Sương Mù & Thung Lũng Mơ Màng',
+    city: 'Đà Lạt',
+    temperature: '14°C',
+    weatherCondition: 'Sương mù lãng đãng, hoàng hôn buông se lạnh',
+    icon: '🌲',
+    aiPromptMessage: 'Đà Lạt 14°C thơ mộng, AI đề xuất phối Áo Giao Lĩnh kết hợp áo Mũ Beret Cổ Điển và Khăn Lụa Bandana ấm áp giữa rừng thông.',
+    stylingRecommendation: 'Áo Giao Lĩnh cổ chéo kết hợp Mũ Nồi Beret, Quần Tây cạp cao và Boots da cổ cao, cầm túi da quai chéo.',
+    suggestedSelection: {
+      garmentId: 'ao-giao-linh',
+      bottomId: 'pants-tailored-high',
+      headwearId: 'head-beret-modern',
+      footwearId: 'shoes-chelsea-boots',
+      bagId: 'bag-shoulder-leather',
+      colorId: 'indigo-blue',
+      fabricTexture: 'silk',
+      tuckStyle: 'full-tuck'
+    },
+    destinationRefId: 'loc-the-factory-art',
+    badge: 'Vintage & Điện Ảnh'
+  },
+  {
+    id: 'ctx-tet-du-xuan',
+    title: 'Mùa Tết & Dạo Phố Du Xuân',
+    seasonOrFestival: 'Tết Cổ Truyền & Hội Xuân',
+    city: 'Toàn Quốc',
+    temperature: '21°C',
+    weatherCondition: 'Mưa xuân lất phất, đào mai nở rộ đón xuân',
+    icon: '🌸',
+    aiPromptMessage: 'Không khí Tết rộn ràng đón xuân mới, hãy chọn bản phối Áo Dài / Áo Ngũ Thân Sắc Đỏ Sơn Mài cùng Kiềng Bạc Đồng Đông Sơn rước may mắn tài lộc!',
+    stylingRecommendation: 'Áo Ngũ Thân hoặc Áo Dài truyền thống sắc Đỏ Sơn Mài / Vàng Hoàng Yến, kết hợp Kiềng Bạc chạm khắc và Guốc Mộc thanh tao.',
+    suggestedSelection: {
+      garmentId: 'ao-dai',
+      bottomId: 'pants-silk-wide',
+      headwearId: 'head-man-cach-tan',
+      footwearId: 'shoes-guoc-moc',
+      accessoryId: 'acc-silver-kieng',
+      bagId: 'bag-clutch-lacquer',
+      colorId: 'lacquer-red',
+      fabricTexture: 'brocade',
+      tuckStyle: 'untucked'
+    },
+    destinationRefId: 'loc-hoang-thanh',
+    badge: 'Lễ Hội Văn Hóa Đỉnh Cao'
+  }
+];
+
+// Helper: Calculate Vibe Match and rank Where-to-Wear Destinations based on current OutfitSelection
+export function getWhereToWearRecommendations(selection: OutfitSelection): WhereToWearLocation[] {
+  const gId = selection.garmentId;
+  const sId = selection.styleId;
+  const bId = selection.bottomId;
+
+  return WHERE_TO_WEAR_LOCATIONS.map((loc) => {
+    let score = loc.matchScore;
+
+    // Direct garment compatibility
+    if (loc.recommendedGarments.includes(gId)) {
+      score += 4;
+    } else {
+      score -= 8;
+    }
+
+    // Heritage bonus
+    if ((loc.category === 'heritage' || loc.category === 'festival') && (gId === 'ao-tac' || gId === 'ao-nhat-binh' || gId === 'ao-ngu-than')) {
+      score += 5;
+    }
+
+    // Street & Modern art bonus
+    if (loc.category === 'contemporary_art' || loc.category === 'concept_cafe' || loc.category === 'indie_event') {
+      if (sId === 'style-street' || sId === 'style-cyberpunk' || bId === 'pants-denim-wide' || bId === 'pants-cargo-minimal') {
+        score += 6;
+      }
+    }
+
+    // Soft & Poetic bonus for Hoi An / Cafe
+    if (loc.id === 'loc-pho-co-hoi-an' && (gId === 'ao-ba-ba' || gId === 'ao-tu-than' || sId === 'style-soft')) {
+      score += 6;
+    }
+
+    const finalScore = Math.min(99, Math.max(65, score));
+
+    return {
+      ...loc,
+      matchScore: finalScore
+    };
+  }).sort((a, b) => b.matchScore - a.matchScore);
+}

@@ -90,6 +90,10 @@ export interface ColorOption {
   element: 'Kim' | 'Mộc' | 'Thủy' | 'Hỏa' | 'Thổ';
 }
 
+export type SkinToneType = 'porcelain' | 'warm-ivory' | 'golden-honey' | 'caramel';
+export type TuckStyleType = 'untucked' | 'full-tuck' | 'half-tuck';
+export type GenderType = 'female' | 'male' | 'androgynous';
+
 export interface OutfitSelection {
   garmentId: string;
   bottomId: string;
@@ -100,6 +104,10 @@ export interface OutfitSelection {
   styleId: string;
   colorId: string;
   avatarId?: string;
+  gender?: GenderType;
+  tuckStyle?: TuckStyleType;
+  skinTone?: SkinToneType;
+  skinToneId?: SkinToneType;
   customPhotoUrl?: string;
   fabricTexture?: FabricTextureType;
   textureIntensity?: TextureIntensityType;
@@ -108,10 +116,19 @@ export interface OutfitSelection {
 export interface AvatarModel {
   id: string;
   name: string;
+  vietnameseTitle: string;
   gender: 'female' | 'male' | 'androgynous';
   description: string;
-  avatarImg?: string;
-  faceStyle: 'female-classic' | 'female-modern' | 'male-sharp' | 'editorial' | 'custom';
+  vibe: string;
+  badge: string;
+  skinTone: SkinToneType;
+  skinHex: string;
+  shadowHex: string;
+  blushHex: string;
+  lipHex: string;
+  faceStyle: 'female-classic' | 'female-modern' | 'female-poet' | 'male-sharp' | 'male-dandy' | 'editorial';
+  hairDescription: string;
+  quote: string;
 }
 
 export interface SavedOutfit {
@@ -192,4 +209,57 @@ export interface Lookbook {
   author: string;
   createdAt: string;
   theme: string;
+}
+
+export interface WhereToWearLocation {
+  id: string;
+  name: string;
+  city: 'Hà Nội' | 'TP. Hồ Chí Minh' | 'Huế' | 'Hội An' | 'Đà Lạt';
+  category: 'heritage' | 'contemporary_art' | 'concept_cafe' | 'indie_event' | 'festival';
+  categoryName: string;
+  address: string;
+  vibeTag: string;
+  matchScore: number;
+  bestTime: string;
+  photoAngleTip: string;
+  recommendedGarments: string[];
+  stylingTips: string;
+  quote: string;
+  thumbnailUrl?: string;
+  heroColor: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+  googleMapsUrl?: string;
+}
+
+export interface SustainableItem {
+  id: string;
+  name: string;
+  category: 'bottom' | 'garment' | 'footwear' | 'bag' | 'accessories';
+  brandOrType: string;
+  material: string;
+  waterSavedLiters: number;
+  co2SavedKg: number;
+  compatibilityNote: string;
+  targetSlotId: 'bottomId' | 'footwearId' | 'bagId' | 'accessoryId';
+  mappedItemId: string;
+  icon: string;
+  imageUrl?: string;
+}
+
+export interface SmartAIContext {
+  id: string;
+  title: string;
+  seasonOrFestival: string;
+  city: string;
+  temperature: string;
+  weatherCondition: string;
+  icon: string;
+  aiPromptMessage: string;
+  stylingRecommendation: string;
+  suggestedSelection: Partial<OutfitSelection>;
+  destinationRefId: string;
+  badge: string;
 }
